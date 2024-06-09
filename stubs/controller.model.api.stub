@@ -1,0 +1,86 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ namespacedModel }};
+use {{ rootNamespace }}Http\Controllers\Controller;
+use {{ namespacedRequests }}
+use App\Http\Traits\ApiResponseTrait;
+use Illuminate\Support\Facades\Log;
+
+class {{ class }} extends Controller
+{
+     use ApiResponseTrait;
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        try {
+            ${{ modelVariable }} = {{ model }}::paginate();
+            return $this->successResponse(${{ modelVariable }}, 'Done', 200);
+            // return $this->paginated(${{ modelVariable }}, 'Done', 200);
+        } catch (\Throwable $th) {
+            Log::error($th);
+            return $this->errorResponse(null,"there is something wrong in server",500);
+        }
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store({{ storeRequest }} $request)
+    {
+        try {
+            ${{ modelVariable }} = {{ model }}::create([
+                //
+            ]);
+            return $this->successResponse(${{ modelVariable }}, 'Created Successfuly', 200);
+        } catch (\Throwable $th) {
+            Log::error($th);
+            return $this->errorResponse(null,"there is something wrong in server",500);
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show({{ model }} ${{ modelVariable }})
+    {
+        try {
+            return $this->successResponse(${{ modelVariable }}, 'Done', 200);
+        } catch (\Throwable $th) {
+            Log::error($th);
+            return $this->errorResponse(null,"there is something wrong in server",500);
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update({{ updateRequest }} $request, {{ model }} ${{ modelVariable }})
+    {
+        try {
+            // ${{ modelVariable }}->nn = $request->input('nn') ?? ${{ modelVariable }}->nn;
+            ${{ modelVariable }}->save();
+            return $this->successResponse(${{ modelVariable }}, ' Updated Successfuly', 200);
+        } catch (\Throwable $th) {
+            Log::error($th);
+            return $this->errorResponse(null,"there is something wrong in server",500);
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy({{ model }} ${{ modelVariable }})
+    {
+        try {
+            ${{ modelVariable }}->delete();
+            return $this->successResponse(null,'deleted successfully', 200);
+        } catch (\Throwable $th) {
+            Log::error($th);
+            return $this->errorResponse(null,"there is something wrong in server",500);
+        }
+    }
+}
