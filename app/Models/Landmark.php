@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Landmark extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -34,4 +34,10 @@ class Landmark extends Model
     protected $casts = [
         //
     ];
+
+    //one to many relation between cities and landmarks
+    public function city()
+    {
+        return $this->belongsTo(City::class);
+    }
 }
