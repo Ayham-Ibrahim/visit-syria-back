@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('landmarks', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->string('image')->nullable();
-            $table->string('country');
-            $table->boolean('is_admin')->default(false);
-            $table->rememberToken();
+            $table->string('location');
+            $table->foreignId('city_id')->constrained('cities')->cascadeOnDelete();
+            $table->text('primary_description');
+            $table->text('secondary_description');
+            $table->string('internal_image');
+            $table->string('external_image');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('landmarks');
     }
 };

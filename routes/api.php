@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CityController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\AuthController;
 */
 
 
+
 Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'
@@ -26,3 +28,9 @@ Route::group([
     Route::get('/user-profile', [AuthController::class, 'userProfile']);
     });
 Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']);
+
+
+
+Route::apiResource('cities',CityController::class);
+Route::apiResource('services',CityController::class);
+
