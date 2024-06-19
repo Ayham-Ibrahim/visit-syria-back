@@ -15,7 +15,15 @@ class LandmarkResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'                          => $this->id,
+            'id'                    => $this->id,
+            'name'                  => $this->name,
+            'location'              => $this->location,
+            'primary_description'   => $this->primary_description,
+            'secondary_description' => $this->secondary_description,
+            'internal_image'        => $this->internal_image,
+            'external_image'        => $this->external_image,
+            'city'                  => $this->city,
+            'images'                => $this->images->pluck('path'),
         ];
     }
 }
