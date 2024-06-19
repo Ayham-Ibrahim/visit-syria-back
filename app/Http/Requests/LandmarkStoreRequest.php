@@ -26,7 +26,12 @@ class LandmarkStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name'                  => 'required|string|max:150|min:3',
+            'location'              => 'required|string|max:150|min:3',
+            'primary_description'   => 'required|string|max:500|min:3',
+            'secondary_description' => 'required|string|min:3',
+            'internal_image'        => 'required|file|image|mimes:png,jpg,jpeg,tiff|max:10000|mimetypes:image/jpeg,image/png,image/jpg,image/tiff',
+            'external_image'        => 'required|file|image|mimes:png,jpg,jpeg,tiff|max:10000|mimetypes:image/jpeg,image/png,image/jpg,image/tiff',
         ];
     }
     
