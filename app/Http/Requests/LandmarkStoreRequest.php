@@ -26,7 +26,7 @@ class LandmarkStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'                  => 'required|string|max:150|min:3|unique:landmarks,name',
+            'name'                  => 'required|string|max:150|min:3',
             'location'              => 'required|string|max:150|min:3',
             'primary_description'   => 'required|string|max:500|min:3',
             'secondary_description' => 'required|string|max:10000|min:3',

@@ -26,7 +26,7 @@ class LandmarkUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'                  => 'nullable|string|max:150|min:3|unique:landmarks,name',
+            'name'                  => 'nullable|string|max:150|min:3',
             'location'              => 'nullable|string|max:150|min:3',
             'primary_description'   => 'nullable|string|max:500|min:3',
             'secondary_description' => 'nullable|string|max:10000|min:3',
