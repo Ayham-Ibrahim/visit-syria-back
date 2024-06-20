@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\HotelController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -33,4 +34,7 @@ Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']
 
 Route::apiResource('cities',CityController::class);
 Route::apiResource('services',CityController::class);
+Route::apiResource('hotels',HotelController::class);
+
+
 

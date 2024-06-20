@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Hotel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 
 class City extends Model
@@ -28,4 +29,9 @@ class City extends Model
     protected $casts = [
         //
     ];
+
+
+    public function hotels() {
+        return $this->hasMany(Hotel::class); 
+    }
 }
