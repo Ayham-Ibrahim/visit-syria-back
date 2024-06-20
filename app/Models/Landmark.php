@@ -33,8 +33,9 @@ class Landmark extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        //
+       // 'images' => 'array',
     ];
+    
 
     //one to many relation between cities and landmarks
     public function city()
@@ -46,5 +47,11 @@ class Landmark extends Model
     public function images() :MorphMany
     {
         return $this->morphMany(Image::class, 'imageable');
+    }
+
+    public function deleteImages()
+    {
+        // Delete the associated images
+        $this->images()->delete();
     }
 }
