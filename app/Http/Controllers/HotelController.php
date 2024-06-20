@@ -47,7 +47,6 @@ class HotelController extends Controller
                 'cover_image'           => $this->storeFile($request->cover_image, 'hotel'),
                 'logo'                  => $this->storeFile($request->logo, 'hotel'),
             ]);
-
              // Assuming request->images is an array of image paths/files
             $this->storeAndAssociateImages($hotel, $request->images, 'hotel');
             DB::commit();
@@ -90,7 +89,7 @@ class HotelController extends Controller
             $hotel->logo = $this->fileExists($request->logo, 'hotel') ?? $hotel->logo;
 
             if(!empty($request->images)){
-                $this->storeAndAssociateImages($hotel, $request->images, 'hotel');
+                // $this->storeAndAssociateImages($hotel, $request->images, 'hotel');
             }
             $hotel->save();
             DB::commit();

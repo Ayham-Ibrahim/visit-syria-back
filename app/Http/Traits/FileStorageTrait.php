@@ -3,6 +3,7 @@
 namespace App\Http\Traits;
 
 use Exception;
+use App\Models\Image;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use League\Flysystem\Visibility;
@@ -75,8 +76,10 @@ trait FileStorageTrait
     public function storeAndAssociateImages($model, $images,string $folderName)
     {
         foreach ($images as $image) {
-            $model->images()->create([
-                'path' =>  $this->storeFile($image, $folderName)
+            $image = Image::create([
+                'path' =>  $this->storeFile($image, $folderName),
+                'imageable_id' => $model->id,
+                'imageable_type' => get_class($model),
             ]);
         }
     }
