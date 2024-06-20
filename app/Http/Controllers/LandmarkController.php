@@ -36,11 +36,6 @@ class LandmarkController extends Controller
     {
         try {
             DB::beginTransaction();
-
-            // store Images
-            // $internal_image = $this->storeFile($request->internal_image, 'landmark/' . $request->name . '/internal_image');
-            // $external_image = $this->storeFile($request->external_image, 'landmark/' . $request->name . '/external_image');
-
             $internal_image = $this->storeFile($request->internal_image, 'landmark');
             $external_image = $this->storeFile($request->external_image, 'landmark');
 
@@ -92,6 +87,7 @@ class LandmarkController extends Controller
     public function update(LandmarkUpdateRequest $request, Landmark $landmark)
     {
         try {
+            DB::beginTransaction();
             $newData = [];
 
             if (isset($request->name)) {
@@ -144,8 +140,6 @@ class LandmarkController extends Controller
                     // delete image from Image 
                     $image->delete();
                 }
-                // $landmark->deleteImages();
-
 
                 // add the new list
                 foreach ($request->file('images') as $image) {
@@ -162,7 +156,7 @@ class LandmarkController extends Controller
             }
 
             $landmark->update($newData);
-
+            DB::commit();
             return $this->successResponse(new LandmarkResource($landmark), ' Updated Successfuly', 200);
         } catch (\Throwable $th) {
             Log::error($th);
@@ -176,7 +170,7 @@ class LandmarkController extends Controller
     public function destroy(Landmark $landmark)
     {
         try {
-
+            DB::beginTransaction();
             $this->deleteImage($landmark->internal_image, storage_path('app\public\landmark'));
             $this->deleteImage($landmark->external_image, storage_path('app\public\landmark'));
 
@@ -185,10 +179,12 @@ class LandmarkController extends Controller
                 $this->deleteImage($image->path, storage_path('app\public\landmark'));
             }
 
-            
+
             $landmark->delete();
+            DB::commit();
             return $this->successResponse(null, 'deleted successfully', 200);
         } catch (\Throwable $th) {
+            DB::rollBack();
             Log::error($th);
             return $this->errorResponse(null, "there is something wrong in server", 500);
         }
