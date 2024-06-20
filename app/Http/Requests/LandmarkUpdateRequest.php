@@ -26,12 +26,15 @@ class LandmarkUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'                  => 'nullable|string|max:150|min:3',
+            'name'                  => 'nullable|string|max:150|min:3|unique:landmarks,name',
             'location'              => 'nullable|string|max:150|min:3',
             'primary_description'   => 'nullable|string|max:500|min:3',
-            'secondary_description' => 'nullable|string|min:3',
+            'secondary_description' => 'nullable|string|max:10000|min:3',
             'internal_image'        => 'nullable|file|image|mimes:png,jpg,jpeg,tiff|max:10000|mimetypes:image/jpeg,image/png,image/jpg,image/tiff',
             'external_image'        => 'nullable|file|image|mimes:png,jpg,jpeg,tiff|max:10000|mimetypes:image/jpeg,image/png,image/jpg,image/tiff',
+            'city_id'               => 'nullable|exists:cities,id',
+            'images'                => 'nullable',
+            'images.*'              => 'file|image|mimes:png,jpg,jpeg,tiff|max:10000|mimetypes:image/jpeg,image/png,image/jpg,image/tiff',
         ];
     }
     

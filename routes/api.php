@@ -4,6 +4,7 @@ use App\Http\Controllers\CityController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LandmarkController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,3 +35,5 @@ Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']
 Route::apiResource('cities',CityController::class);
 Route::apiResource('services',CityController::class);
 
+
+Route::apiResource('landmarks',LandmarkController::class);
