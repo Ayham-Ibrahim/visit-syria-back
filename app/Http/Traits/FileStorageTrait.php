@@ -21,8 +21,8 @@ trait FileStorageTrait
         }
 
         //validate the mime type and extentions
-        $allowedMimeTypes = ['image/jpeg','image/png','image/gif'];
-        $allowedExtensions = ['jpeg','png','gif','jpg'];
+        $allowedMimeTypes = ['image/jpeg','image/png','image/gif','image/jfif'];
+        $allowedExtensions = ['jpeg','png','gif','jpg','jfif'];
         $mime_type = $file->getClientMimeType();
         $extension = $file->getClientOriginalExtension();
 
@@ -38,14 +38,16 @@ trait FileStorageTrait
         $path = $file->storeAs($folderName,$fileName . '.' . $extension,'public');
 
         //verify the path to ensure it matches the expected pattern
-        $expectedPath = storage_path('app/public/images/' . $fileName . '.' . $extension);
-        if (realpath(storage_path('app/public') . '/' . $path) !== $expectedPath){
+        $expectedPath = storage_path('app/public/'. $folderName .'/' . $fileName . '.' . $extension);
+        $actualPath = storage_path('app/public/'.$path);
+        if ($actualPath !== $expectedPath){
             Storage::disk('public')->delete($path);
             throw new Exception(trans('general.notAllowedAction'),403);
         }
 
         // get the url of the stored file
-        $url = Storage::disk('public')->url($path);
+        // $url = Storage::disk('public')->url($path);
+        $url = Storage::url($path);
         return $url;
     }
 
@@ -69,6 +71,15 @@ trait FileStorageTrait
         return $this->storeFile($file, $folderName);
     }
 
+
+    public function storeAndAssociateImages($model, $images,string $folderName)
+    {
+        foreach ($images as $image) {
+            $model->images()->create([
+                'path' =>  $this->storeFile($image, $folderName)
+            ]);
+        }
+    }
 
 
 }
