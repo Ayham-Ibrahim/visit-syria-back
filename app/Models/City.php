@@ -28,4 +28,8 @@ class City extends Model
     protected $casts = [
         //
     ];
+
+    public function resturants() {
+        return $this->hasMany(Restaurant::class);
+    }
 }

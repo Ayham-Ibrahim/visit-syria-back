@@ -36,4 +36,17 @@ class Restaurant extends Model
     protected $casts = [
         //
     ];
+
+    public function city() {
+        return $this->belongsTo(City::class);
+    }
+
+    public function services() {
+        return $this->belongsToMany(Service::class, 'resturant_services');
+    }
+
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
 }
