@@ -87,16 +87,14 @@ class HotelController extends Controller
             $hotel->price = $request->input('price') ?? $hotel->price;
             $hotel->cover_image = $this->fileExists($request->cover_image, 'hotel') ?? $hotel->cover_image;
             $hotel->logo = $this->fileExists($request->logo, 'hotel') ?? $hotel->logo;
-
             if(!empty($request->images)){
-                // $this->storeAndAssociateImages($hotel, $request->images, 'hotel');
+                $this->updateAndAssociateNewImages($hotel, $request->images, 'hotel');
             }
             $hotel->save();
             DB::commit();
             return $this->successResponse(new HotelResource($hotel), ' Updated Successfuly', 200);
         } catch (\Throwable $th) {
             DB::rollback();
-
             Log::error($th);
             return $this->errorResponse(null,"there is something wrong in server",500);
         }

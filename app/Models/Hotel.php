@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use Exception;
 use App\Models\City;
 use App\Models\Image;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -47,24 +50,29 @@ class Hotel extends Model
         return $this->belongsTo(City::class);
     }
 
-    /**
-     * Set the city name based on the city_id.
-     *
-     * @param  mixed  $value
-     * @return void
-     */
-    // public function setCityIdAttribute($value)
-    // {
-    //     $this->attributes['city_id'] = $value;
-    //     // Fetch the city name using the city_id
-    //     $cityName = City::find($value)->name;
-    //     // Store the city name in the city_name attribute
-    //     $this->attributes['city_name'] = $cityName;
-    // }
 
-    public function getCityIdAttribute($value) {
-        $cityName = City::find($value)->name;
-        return $cityName;
+    /**
+     * Delete the hotel and its associated images.
+     */
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($hotel) {
+            $hotel->images()->each(function ($image) {
+                try {
+                    // Attempt to delete the file from the filesystem
+                    $filePath = public_path($image->path);
+                    if (file_exists($filePath)) {
+                        unlink($filePath);
+                    }
+                } catch (Exception $e) {
+                    Log::error("Error deleting file: {$e->getMessage()}");
+                }
+                // we can make delete for soft delete 
+                $image->forceDelete();
+            });
+        });
     }
 
 }
