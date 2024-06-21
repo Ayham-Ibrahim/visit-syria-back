@@ -16,8 +16,8 @@ class CityController extends Controller
     public function index()
     {
         try {
-            $city = City::all();
-            return $this->successResponse($city, 'Done', 200);
+            $cities = City::select('name')->get();
+            return $this->successResponse($cities, 'Done', 200);
         } catch (\Throwable $th) {
             Log::error($th);
             return $this->errorResponse(null,"there is something wrong in server",500);
@@ -46,7 +46,7 @@ class CityController extends Controller
     public function show(City $city)
     {
         try {
-            return $this->successResponse($city, 'Done', 200);
+            return $this->successResponse($city->name, 'Done', 200);
         } catch (\Throwable $th) {
             Log::error($th);
             return $this->errorResponse(null,"there is something wrong in server",500);

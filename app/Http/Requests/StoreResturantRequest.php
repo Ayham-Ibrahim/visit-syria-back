@@ -34,7 +34,7 @@ class StoreResturantRequest extends FormRequest
             'logo' => 'required|file|image|mimes:png,jpg,jpeg|max:10000|mimetypes:image/jpeg,image/png,image/jpg',
             'cover_image' => 'required|file|image|mimes:png,jpg,jpeg|max:10000|mimetypes:image/jpeg,image/png,image/jpg',
             'table_price' => 'required|numeric',
-            'menu' => 'required',
+            'menu' => 'required|file|image|mimes:png,jpg,jpeg|max:10000|mimetypes:image/jpeg,image/png,image/jpg',
             'services' => 'array|nullable',
             'services.*' => 'exists:services,id',
         ];

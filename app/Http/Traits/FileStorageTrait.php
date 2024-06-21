@@ -25,6 +25,11 @@ trait FileStorageTrait
                 $allowedExtensions = ['jpeg','png','gif','jpg'];
                 $mime_type = $file->getClientMimeType();
                 $extension = $file->getClientOriginalExtension();
+                //validate the mime type and extentions
+                $allowedMimeTypes = ['image/jpeg','image/png','image/gif','image/jfif'];
+                $allowedExtensions = ['jpeg','png','gif','jpg','jfif'];
+                $mime_type = $file->getClientMimeType();
+                $extension = $file->getClientOriginalExtension();
 
                 if (!in_array($mime_type,$allowedMimeTypes) || !in_array($extension,$allowedExtensions)){
                     throw new Exception(trans('general.invalidFileType'), 403);
@@ -52,7 +57,19 @@ trait FileStorageTrait
             }
 
     // }
+        // verify the path to ensure it matches the expected pattern
+        // $expectedPath = storage_path('app/public/'. $folderName .'/' . $fileName . '.' . $extension);
+        // $actualPath = storage_path('app/public/'.$path);
+        // if ($actualPath !== $expectedPath){
+            // Storage::disk('public')->delete($path);
+            // throw new Exception(trans('general.notAllowedAction'),403);
+// /        }
 
+        // get the url of the stored file
+        // $url = Storage::disk('public')->url($path);
+        // $url = Storage::url($path);
+        // return $url;
+    // }
 
         /**
      * Check if a file exists and upload it.
@@ -73,6 +90,15 @@ trait FileStorageTrait
         return $this->storeFile($file, $folderName);
     }
 
+
+    public function storeAndAssociateImages($model, $images,string $folderName)
+    {
+        foreach ($images as $image) {
+            $model->images()->create([
+                'path' =>  $this->storeFile($image, $folderName)
+            ]);
+        }
+    }
 
 
 }

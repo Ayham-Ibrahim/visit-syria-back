@@ -37,12 +37,18 @@ class Restaurant extends Model
         //
     ];
 
+
     public function city() {
         return $this->belongsTo(City::class);
     }
 
     public function services() {
         return $this->belongsToMany(Service::class, 'resturant_services');
+    }
+
+    public function getCityIdAttribute($value) {
+        $cityName = City::find($value)->name;
+        return $cityName;
     }
 
     public function images()

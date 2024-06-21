@@ -26,14 +26,14 @@ class UpdateResturantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'sometimes',
-            'location' => 'sometimes',
-            'city_id' => 'sometimes|exists:cities,id',
-            'primary_description' => 'sometimes',
+            'name' => 'nullable',
+            'location' => 'nullable',
+            'city_id' => 'nullable|exists:cities,id',
+            'primary_description' => 'nullable',
             'secondary_description' => 'nullable',
-            'logo' => 'sometimes|file|image|mimes:png,jpg|max:10000|mimetypes:image/jpeg,image/png,image/jpg',
-            'cover_image' => 'sometimes|file|image|mimes:png,jpg|max:10000|mimetypes:image/jpeg,image/png,image/jpg',
-            'table_price' => 'sometimes|numeric',
+            'logo' => 'nullable|file|image|mimes:png,jpg|max:10000|mimetypes:image/jpeg,image/png,image/jpg',
+            'cover_image' => 'nullable|file|image|mimes:png,jpg|max:10000|mimetypes:image/jpeg,image/png,image/jpg',
+            'table_price' => 'nullable|file|image|mimes:png,jpg|max:10000|mimetypes:image/jpeg,image/png,image/jpg',
             'menu' => 'nullable',
             'services' => 'array|nullable',
             'services.*' => 'exists:services,id',
