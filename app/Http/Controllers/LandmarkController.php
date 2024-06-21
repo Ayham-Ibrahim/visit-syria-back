@@ -22,7 +22,7 @@ class LandmarkController extends Controller
     {
         try {
             $landmarks = Landmark::with('city')->paginate(9);
-            return $this->successResponse(LandmarkResource::collection($landmarks), 'Done', 200);
+            return $this->resourcePaginated(LandmarkResource::collection($landmarks),'Done',200);
         } catch (\Throwable $th) {
             Log::error($th);
             return $this->errorResponse(null, "there is something wrong in server", 500);
