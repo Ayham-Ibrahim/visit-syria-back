@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CityController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,5 +21,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::apiResource('cities',CityController::class);
-Route::apiResource('services',CityController::class);
+Route::apiResource('cities', CityController::class);
+Route::apiResource('services', CityController::class);
+
+Route::get('/blogs', [BlogController::class, 'index']);
+Route::post('/add', [BlogController::class, 'store']);
+Route::get('/blog/{blog}', [BlogController::class, 'show']);
+Route::put('/update/{blog}', [BlogController::class, 'update']);
+Route::delete('/blog/{blog}', [BlogController::class, 'destroy']);

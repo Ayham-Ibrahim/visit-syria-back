@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Blog extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -19,8 +19,9 @@ class Blog extends Model
     protected $fillable = [
         'title',
         'content',
-        'category',
+        // 'category',
         'main_image',
+        // 'city_id',
     ];
 
     /**
