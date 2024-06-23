@@ -29,6 +29,7 @@ Route::group([
     Route::get('/user-profile', [AuthController::class, 'userProfile']);
     });
 Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']);
+Route::middleware('auth:api')->put('/update-user/{user}', [AuthController::class, 'update']);
 
 
 
