@@ -3,10 +3,13 @@
 namespace App\Http\Traits;
 
 use Exception;
+use App\Models\Image;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use League\Flysystem\Visibility;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 trait FileStorageTrait
@@ -96,11 +99,29 @@ trait FileStorageTrait
     {
         Log::info($images);
         foreach ($images as $image) {
-            $model->images()->create([
-                'path' =>  $this->storeFile($image, $folderName)
+            $image = Image::create([
+                'path' =>  $this->storeFile($image, $folderName),
+                'imageable_id' => $model->id,
+                'imageable_type' => get_class($model),
             ]);
         }
     }
 
-
+    public function updateAndAssociateNewImages($model, $images,string $folderName){
+        DB::beginTransaction();
+        try {
+            $model->images()->each(function ($image) {
+                $filePath = public_path($image->path);
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
+                $image->forceDelete();
+            });
+            $this->storeAndAssociateImages($model, $images, $folderName);
+            DB::commit();
+        }catch (Exception $e) {
+            DB::rollback();
+            Log::error("Error deleting file: {$e->getMessage()}");
+        }
+    }
 }
