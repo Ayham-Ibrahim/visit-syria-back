@@ -5,6 +5,7 @@ namespace App\Http\Traits;
 use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use League\Flysystem\Visibility;
 use Illuminate\Support\Facades\Storage;
 
@@ -93,6 +94,7 @@ trait FileStorageTrait
 
     public function storeAndAssociateImages($model, $images,string $folderName)
     {
+        Log::info($images);
         foreach ($images as $image) {
             $model->images()->create([
                 'path' =>  $this->storeFile($image, $folderName)

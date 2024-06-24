@@ -37,6 +37,8 @@ class StoreResturantRequest extends FormRequest
             'menu' => 'required|file|image|mimes:png,jpg,jpeg|max:10000|mimetypes:image/jpeg,image/png,image/jpg',
             'services' => 'array|nullable',
             'services.*' => 'exists:services,id',
+            'images.*'              => 'required|file|image|mimes:png,jpg,jpeg,jfif|max:10000|mimetypes:image/jpeg,image/png,image/jpg,image/jfif', // Validate each image individually
+            'images'                 => 'array', // Ensure images is an array
         ];
     }
 

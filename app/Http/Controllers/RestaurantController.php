@@ -17,12 +17,12 @@ class RestaurantController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($page)
     {
         try {
-            $restaurant = Restaurant::paginate(9);
+            $restaurants = Restaurant::paginate(9,'*', 'page', $page);
 
-            return $this->successResponse($restaurant, 'Done', 200);
+            return $this->successResponse($restaurants, 'Done', 200);
             // return $this->paginated($restaurant, 'Done', 200);
         } catch (\Throwable $th) {
             Log::error($th);

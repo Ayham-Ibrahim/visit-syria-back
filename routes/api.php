@@ -35,7 +35,7 @@ Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']
 
 
 Route::group(['prefix' => 'restaurants'], function () {
-    Route::get('/', [RestaurantController::class, 'index']);
+    Route::get('/page/{page}', [RestaurantController::class, 'index']);
     Route::get('/by_city/{city_id}', [RestaurantController::class, 'showByCity']);
     Route::get('/sort/{sort_by}', [RestaurantController::class, 'showStored']);
     Route::get('/{restaurant}', [RestaurantController::class, 'show']);
@@ -43,7 +43,7 @@ Route::group(['prefix' => 'restaurants'], function () {
     Route::post('/create', [RestaurantController::class, 'store']);
     // ->middleware('admin');
 
-    Route::put('/update/{restaurant}', [RestaurantController::class, 'update']);
+    Route::post('/update/{restaurant}', [RestaurantController::class, 'update']);
     // ->middleware('admin');
 
     Route::delete('/delete/{restaurant}', [RestaurantController::class, 'destroy']);
