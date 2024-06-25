@@ -13,12 +13,34 @@ class BlogController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $blog = Blog::all();
         return response()->json($blog);
         try {
-            $blog = Blog::paginate();
+
+            $query = Blog::select(
+                'title',
+                'created_at',
+                'id',
+            );
+
+            if ($request->has('title')) {
+                $query->where('title', 'like', '%' . $request->title . '%');
+            }
+
+            if ($request->has('created_at')) {
+                $query->where('created_at', '=', $request->created_at);
+            }
+
+            if ($request->has('id')) {
+                $query->where('id', '=', $request->id);
+            }
+
+            $blogs = $query->paginate(9);
+
+            return $this->paginated($blogs, 'Done', 200);
+
             return $this->successResponse($blog, 'Done', 200);
             // return $this->paginated($blog, 'Done', 200);
         } catch (\Throwable $th) {
