@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\HotelController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -29,7 +30,13 @@ Route::group([
     Route::get('/user-profile', [AuthController::class, 'userProfile']);
 });
 Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']);
+Route::middleware('auth:api')->put('/update-user/{user}', [AuthController::class, 'update']);
 
+
+
+Route::apiResource('cities',CityController::class);
+Route::apiResource('services',CityController::class);
+Route::apiResource('hotels',HotelController::class);
 
 
 Route::apiResource('cities', CityController::class);

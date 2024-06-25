@@ -3,9 +3,11 @@
 namespace App\Http\Traits;
 
 use Exception;
+use App\Models\Image;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use League\Flysystem\Visibility;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -23,8 +25,8 @@ trait FileStorageTrait
         }
 
         //validate the mime type and extentions
-        $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
-        $allowedExtensions = ['jpeg', 'png', 'gif', 'jpg'];
+        $allowedMimeTypes = ['image/jpeg','image/png','image/gif','image/jfif'];
+        $allowedExtensions = ['jpeg','png','gif','jpg','jfif'];
         $mime_type = $file->getClientMimeType();
         $extension = $file->getClientOriginalExtension();
 
@@ -43,6 +45,9 @@ trait FileStorageTrait
         $expectedPath = storage_path('app/public/' . $folderName . '/' . $fileName . '.' . $extension);
         $actualPath = storage_path('app/public/' . $path);
         if ($actualPath !== $expectedPath) {
+        $expectedPath = storage_path('app/public/'. $folderName .'/' . $fileName . '.' . $extension);
+        $actualPath = storage_path('app/public/'.$path);
+        if ($actualPath !== $expectedPath){
             Storage::disk('public')->delete($path);
             throw new Exception(trans('general.notAllowedAction'), 403);
         }
@@ -66,6 +71,7 @@ trait FileStorageTrait
      * @param  string  $fileColumnName The name of the file input field in the request.
      * @return string|null The file path if the file exists, otherwise null.
      */
+    
     public function fileExists($file, string $folderName)
     {
         if (empty($file)) {
@@ -75,11 +81,32 @@ trait FileStorageTrait
     }
 
 
-    public function deleteImage($image, $folderName)
+    public function storeAndAssociateImages($model, $images,string $folderName)
     {
-        $temp = explode('/', $image);
-        $old_image = $temp[count($temp) - 1];
-        $full_path = $folderName . '\\' . $old_image;
-        unlink($full_path);
+        foreach ($images as $image) {
+            $image = Image::create([
+                'path' =>  $this->storeFile($image, $folderName),
+                'imageable_id' => $model->id,
+                'imageable_type' => get_class($model),
+            ]);
+        }
+    }
+
+    public function updateAndAssociateNewImages($model, $images,string $folderName){
+        DB::beginTransaction();
+        try {
+            $model->images()->each(function ($image) {
+                $filePath = public_path($image->path);
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
+                $image->forceDelete();
+            });
+            $this->storeAndAssociateImages($model, $images, $folderName);
+            DB::commit();
+        }catch (Exception $e) {
+            DB::rollback();
+            Log::error("Error deleting file: {$e->getMessage()}");
+        }
     }
 }

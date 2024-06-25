@@ -1,15 +1,22 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Requests\UpdateUser;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Http\Traits\ApiResponseTrait;
+use App\Http\Traits\FileStorageTrait;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+    use FileStorageTrait, ApiResponseTrait;
     /**
      * Create a new AuthController instance.
      *
@@ -47,6 +54,7 @@ class AuthController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|between:2,100',
+            'country' => 'required|string|between:2,50',
             'email' => 'required|string|email|max:100|unique:users',
             'password' => 'required|string|min:6',
         ]);
@@ -57,10 +65,36 @@ class AuthController extends Controller
             $validator->validated(),
             ['password' => bcrypt($request->password)]
         ));
-        return response()->json([
-            'message' => 'User successfully registered',
-            'user' => $user
-        ], 201);
+        $token = JWTAuth::fromUser($user);
+
+        return $this->createNewToken($token);
+    }
+    /**
+     * Update the specified user.
+     *
+     * @param UpdateUser $request
+     * @param User $user
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(UpdateUser $request, User $user)
+    {
+        try {
+
+            DB::beginTransaction();
+            $user->name = $request->input('name') ?? $user->name;
+            $user->country = $request->input('country') ?? $user->country;
+            $user->email = $request->input('email') ?? $user->email;
+            $user->password = $request->input('password') ?? $user->password;
+            $user->image = $this->fileExists($request->image, 'hotel') ?? $user->image;
+            $user->save();
+            DB::commit();
+            $user_updated = $user->only('name', 'country', 'email', 'image');
+            return $this->successResponse($user_updated, 'user updated successfuly');
+        } catch (\Throwable $th) {
+            DB::rollback();
+            Log::error($th);
+            return $this->errorResponse(null, "there is something wrong in server", 500);
+        }
     }
     /**
      * Log the user out (Invalidate the token).
