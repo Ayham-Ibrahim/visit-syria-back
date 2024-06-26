@@ -36,7 +36,8 @@ class LandmarkController extends Controller
             if ($sortBy) {
                 if ($sortBy == "city") {
                     $landmarks->join('cities', 'landmarks.city_id', '=', 'cities.id')
-                    ->orderBy('cities.name', 'asc');
+                        ->orderBy('cities.name', 'asc')
+                        ->select('landmarks.*');
                 } else {
                     $landmarks->orderBy($sortBy, 'asc');
                 }
