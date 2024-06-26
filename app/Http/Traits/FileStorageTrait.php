@@ -104,11 +104,4 @@ trait FileStorageTrait
         }
     }
 
-    public function deleteImage($image, $folderName)
-    {
-        $temp = explode('/', $image);
-        $old_image = $temp[count($temp) - 1];
-        $full_path = $folderName . '\\' . $old_image;
-        unlink($full_path);
-    }
 }
