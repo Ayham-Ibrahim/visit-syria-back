@@ -63,15 +63,8 @@ class LandmarkController extends Controller
                 'external_image'        =>  $external_image,
             ]);
 
+            $this->storeAndAssociateImages($landmark, $request->images, 'landmark');
 
-            // connect images in Image model with Landmark model
-            foreach ($request->file('images') as $image) {
-                Image::create([
-                    'path' => $this->storeFile($image, 'landmark'),
-                    'imageable_type' => Landmark::class,
-                    'imageable_id' => $landmark->id,
-                ]);
-            }
             DB::commit();
             return $this->successResponse(new LandmarkResource($landmark), 'Created Successfuly', 200);
         } catch (\Throwable $th) {
@@ -120,53 +113,16 @@ class LandmarkController extends Controller
                 $newData['secondary_description'] = $request->secondary_description;
             }
 
-
-            if (isset($request->internal_image)) {
-                $this->deleteImage($landmark->internal_image, storage_path('app\public\landmark'));
-
-                //save new image
-                $image_path = $this->storeFile($request->internal_image, 'landmark');
-
-                //add new image to list
-                $newData['internal_image'] = $image_path;
-            }
-
-            if (isset($request->external_image)) {
-                $this->deleteImage($landmark->external_image, storage_path('app\public\landmark'));
+            if (isset($request->internal_image))
+                $newData['internal_image'] = $this->fileExists($request->internal_image, 'landmark') ?? $landmark->internal_image;
 
 
-                //save new image
-                $image_path = $this->storeFile($request->external_image, 'landmark');
+            if (isset($request->external_image))
+                $newData['external_image'] = $this->fileExists($request->external_image, 'landmark') ?? $landmark->external_image;
 
-                //add new image to list
-                $newData['external_image'] = $image_path;
-            }
 
-            if (isset($request->images)) {
-
-                //delete the old list
-                foreach ($landmark->images as $image) {
-
-                    // delete image from storage
-                    $this->deleteImage($image->path, storage_path('app\public\landmark'));
-
-                    // delete image from Image 
-                    $image->delete();
-                }
-
-                // add the new list
-                foreach ($request->file('images') as $image) {
-                    $image_path = $this->storeFile($image, 'landmark');
-
-                    Image::create([
-                        'path' => $image_path,
-                        'imageable_type' => Landmark::class,
-                        'imageable_id' => $landmark->id,
-                    ]);
-
-                    $newData['images'][] = $image_path;
-                }
-            }
+            if (isset($request->images))
+                $this->updateAndAssociateNewImages($landmark, $request->images, 'landmark');
 
             $landmark->update($newData);
             DB::commit();
