@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
+use Exception;
+
 
 
 class Landmark extends Model
@@ -53,5 +56,26 @@ class Landmark extends Model
     {
         // Delete the associated images
         $this->images()->delete();
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($landmark) {
+            $landmark->images()->each(function ($image) {
+                try {
+                    // Attempt to delete the file from the filesystem
+                    $filePath = public_path($image->path);
+                    if (file_exists($filePath)) {
+                        unlink($filePath);
+                    }
+                } catch (Exception $e) {
+                    Log::error("Error deleting file: {$e->getMessage()}");
+                }
+                // we can make delete for soft delete 
+                $image->forceDelete();
+            });
+        });
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Image;
 use App\Models\Landmark;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Traits\ApiResponseTrait;
@@ -11,6 +12,7 @@ use App\Http\Traits\FileStorageTrait;
 use App\Http\Resources\LandmarkResource;
 use App\Http\Requests\LandmarkStoreRequest;
 use App\Http\Requests\LandmarkUpdateRequest;
+use Psy\Readline\Hoa\Console;
 
 class LandmarkController extends Controller
 {
@@ -18,16 +20,27 @@ class LandmarkController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $landmarks = Landmark::with('city')->paginate(9);
-            return $this->resourcePaginated(LandmarkResource::collection($landmarks),'Done',200);
+
+            $cityName = $request->input('city');
+            $sortBy = $request->input('sort_by', 'id');
+
+            $landmarks = Landmark::with('city')
+                ->whereHas('city', function ($query) use ($cityName) {
+                    $query->where('name', $cityName);
+                })->orderBy($sortBy, 'asc');
+
+
+            $data = $landmarks->paginate(9);
+            return $this->resourcePaginated(LandmarkResource::collection($data), 'Done', 200);
         } catch (\Throwable $th) {
             Log::error($th);
             return $this->errorResponse(null, "there is something wrong in server", 500);
         }
     }
+
 
     /**
      * Store a newly created resource in storage.
