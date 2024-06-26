@@ -27,11 +27,15 @@ class LandmarkController extends Controller
             $cityName = $request->input('city');
             $sortBy = $request->input('sort_by', 'id');
 
-            $landmarks = Landmark::with('city')
-                ->whereHas('city', function ($query) use ($cityName) {
+            $landmarks = Landmark::with('city');
+            if ($cityName) {
+                $landmarks->whereHas('city', function ($query) use ($cityName) {
                     $query->where('name', $cityName);
-                })->orderBy($sortBy, 'asc');
-
+                });
+            }
+            if ($sortBy) {
+                $landmarks->orderBy($sortBy, 'asc');
+            }
 
             $data = $landmarks->paginate(9);
             return $this->resourcePaginated(LandmarkResource::collection($data), 'Done', 200);
