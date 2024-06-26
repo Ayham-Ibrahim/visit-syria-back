@@ -42,7 +42,7 @@ class LandmarkController extends Controller
                     $landmarks->orderBy($sortBy, 'asc');
                 }
             }
-
+            
             $data = $landmarks->paginate(9);
             return $this->resourcePaginated(LandmarkResource::collection($data), 'Done', 200);
         } catch (\Throwable $th) {

@@ -16,7 +16,7 @@ class CityController extends Controller
     public function index()
     {
         try {
-            $cities = City::select('name')->get();
+            $cities = City::select('name','id')->get();
             return $this->successResponse($cities, 'Done', 200);
         } catch (\Throwable $th) {
             Log::error($th);
