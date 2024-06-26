@@ -34,7 +34,12 @@ class LandmarkController extends Controller
                 });
             }
             if ($sortBy) {
-                $landmarks->orderBy($sortBy, 'asc');
+                if ($sortBy == "city") {
+                    $landmarks->join('cities', 'landmarks.city_id', '=', 'cities.id')
+                    ->orderBy('cities.name', 'asc');
+                } else {
+                    $landmarks->orderBy($sortBy, 'asc');
+                }
             }
 
             $data = $landmarks->paginate(9);
