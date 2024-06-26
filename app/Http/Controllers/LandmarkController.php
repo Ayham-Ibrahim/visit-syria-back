@@ -139,21 +139,9 @@ class LandmarkController extends Controller
     public function destroy(Landmark $landmark)
     {
         try {
-            DB::beginTransaction();
-            $this->deleteImage($landmark->internal_image, storage_path('app\public\landmark'));
-            $this->deleteImage($landmark->external_image, storage_path('app\public\landmark'));
-
-            foreach ($landmark->images as $image) {
-                // delete image from Image 
-                $this->deleteImage($image->path, storage_path('app\public\landmark'));
-            }
-
-
             $landmark->delete();
-            DB::commit();
             return $this->successResponse(null, 'deleted successfully', 200);
         } catch (\Throwable $th) {
-            DB::rollBack();
             Log::error($th);
             return $this->errorResponse(null, "there is something wrong in server", 500);
         }
