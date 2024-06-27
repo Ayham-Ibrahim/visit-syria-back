@@ -69,33 +69,7 @@ class AuthController extends Controller
 
         return $this->createNewToken($token);
     }
-    /**
-     * Update the specified user.
-     *
-     * @param UpdateUser $request
-     * @param User $user
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update(UpdateUser $request, User $user)
-    {
-        try {
-
-            DB::beginTransaction();
-            $user->name = $request->input('name') ?? $user->name;
-            $user->country = $request->input('country') ?? $user->country;
-            $user->email = $request->input('email') ?? $user->email;
-            $user->password = $request->input('password') ?? $user->password;
-            $user->image = $this->fileExists($request->image, 'hotel') ?? $user->image;
-            $user->save();
-            DB::commit();
-            $user_updated = $user->only('name', 'country', 'email', 'image');
-            return $this->successResponse($user_updated, 'user updated successfuly');
-        } catch (\Throwable $th) {
-            DB::rollback();
-            Log::error($th);
-            return $this->errorResponse(null, "there is something wrong in server", 500);
-        }
-    }
+   
     /**
      * Log the user out (Invalidate the token).
      *

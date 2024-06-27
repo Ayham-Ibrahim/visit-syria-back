@@ -40,4 +40,11 @@ class City extends Model
     {
         return $this->belongsTo(Blog::class);
     }
+
+
+    //one to many relation between cities and landmarks
+    public function landmarks()
+    {
+        return $this->hasMany(Landmark::class);
+    }
 }
