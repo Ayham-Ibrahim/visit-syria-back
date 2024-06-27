@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 
 class CityController extends Controller
 {
-     use ApiResponseTrait;
+    use ApiResponseTrait;
     /**
      * Display a listing of the resource.
      */
