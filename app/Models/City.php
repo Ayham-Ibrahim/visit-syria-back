@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class City extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -33,5 +33,12 @@ class City extends Model
 
     public function hotels() {
         return $this->hasMany(Hotel::class); 
+    }
+
+
+    //one to many relation between cities and landmarks
+    public function landmarks()
+    {
+        return $this->hasMany(Landmark::class);
     }
 }
