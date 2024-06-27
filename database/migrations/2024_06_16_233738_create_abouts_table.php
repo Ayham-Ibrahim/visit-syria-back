@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('abouts', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->text('content');
+            $table->text('content')->nullable();
             $table->enum('category',['الحضارات','التاريخ','الآثار','الطبيعة','السياحة']);
             $table->string('main_image');
             $table->softDeletes();

@@ -2,41 +2,77 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Traits\ApiResponseTrait;
 use App\Models\About;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Http\Traits\ApiResponseTrait;
+use App\Http\Traits\FileStorageTrait;
+use App\Http\Resources\About\AboutResource;
+use App\Http\Requests\About\StoreAboutRequest;
+use App\Http\Requests\About\UpdateAboutRequest;
 
 class AboutController extends Controller
 {
      use ApiResponseTrait;
+     use FileStorageTrait;
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $about = About::paginate();
-            return $this->successResponse($about, 'Done', 200);
-            // return $this->paginated($about, 'Done', 200);
+            $query = About::select('id', 'title', 'category', 'content', 'main_image');
+
+
+            if ($request->has('sort_by')) {
+                $sortBy = $request->sort_by;
+                $query->orderBy($sortBy, 'asc');
+            }
+
+            $about = $query->paginate(9);
+            return $this->paginated($about, 'Done', 200);
+
         } catch (\Throwable $th) {
-            Log::error($th);
-            return $this->errorResponse(null,"there is something wrong in server",500);
+            Log::debug($th);
+            Log::error($th->getMessage());
+                        return $this->errorResponse(null,"there is something wrong in server",500);
         }
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreAboutRequest $request)
     {
         try {
-            $about = About::create([
-                //
-            ]);
-            return $this->successResponse($about, 'Created Successfuly', 200);
-        } catch (\Throwable $th) {
-            Log::error($th);
+            DB::beginTransaction();
+            $content=$request->content;
+             $content=$content !=null ?$request->content:null;
+
+               $about = About::create([
+                 'title' =>$request->title,
+                 'content' =>$content,
+                 'category' =>$request->category,
+                 'main_image' => $this->storeFile($request->main_image,'About')
+
+               ]);
+               if($request->images){
+
+               $this->storeAndAssociateImages($about, $request->images, 'images-About');
+               $about->images;
+               }
+               DB::commit();
+
+               return $this->successResponse( new AboutResource($about),'Created Successfuly', 200);
+        }
+        catch (\Throwable $th)
+         {
+            DB::rollBack();
+
+            Log::debug($th);
+            Log::error($th->getMessage());
+
             return $this->errorResponse(null,"there is something wrong in server",500);
         }
     }
@@ -47,7 +83,8 @@ class AboutController extends Controller
     public function show(About $about)
     {
         try {
-            return $this->successResponse($about, 'Done', 200);
+            $about->images;
+            return $this->successResponse(new AboutResource($about), 'Done', 200);
         } catch (\Throwable $th) {
             Log::error($th);
             return $this->errorResponse(null,"there is something wrong in server",500);
@@ -57,15 +94,38 @@ class AboutController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, About $about)
+    public function update(UpdateAboutRequest $request, About $about)
     {
         try {
-            // $about->nn = $request->input('nn') ?? $about->nn;
-            $about->save();
-            return $this->successResponse($about, ' Updated Successfuly', 200);
-        } catch (\Throwable $th) {
-            Log::error($th);
-            return $this->errorResponse(null,"there is something wrong in server",500);
+            DB::beginTransaction();
+            $newData=[];
+            if(isset($request->title)){
+              $newData['title'] = $request->title;
+            }
+            if(isset($request->content)){
+              $newData['content'] = $request->content;
+            }
+            if(isset($request->main_image)){
+              $newData['main_image'] = $this->fileExists($request->main_image,'About')??$request->main_image;
+            }
+            if(isset($request->category)){
+              $newData['category'] = $request->category;
+            }
+            $about->update($newData);
+            if($request->images){
+
+              if(!empty($request->images)){
+                  $this->updateAndAssociateNewImages($about, $request->images, 'About');
+              }        }
+            $about->images;
+
+            DB::commit();
+            return $this->successResponse(new AboutResource($about), ' Updated Successfuly', 200);
+        }
+        catch (\Throwable $th) {
+            Log::debug($th);
+            Log::error($th->getMessage());
+         return $this->errorResponse(null,"there is something wrong in server",500);
         }
     }
 
@@ -75,11 +135,24 @@ class AboutController extends Controller
     public function destroy(About $about)
     {
         try {
-            $about->delete();
-            return $this->successResponse(null,'deleted successfully', 200);
-        } catch (\Throwable $th) {
+
+            $images=$about->images;
+
+            if ($images) {
+                foreach ($images as $image) {
+                    $image->forceDelete();
+                }
+                $about->forceDelete();
+            }
+            else{
+                $about->forceDelete();
+            }
+                 return $this->successResponse(null,'deleted successfully', 200);
+        }
+         catch (\Throwable $th) {
             Log::error($th);
             return $this->errorResponse(null,"there is something wrong in server",500);
         }
     }
+   
 }

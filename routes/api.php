@@ -1,10 +1,11 @@
 <?php
 
-use App\Http\Controllers\CityController;
-use App\Http\Controllers\HotelController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CityController;
+use App\Http\Controllers\AboutController;
+use App\Http\Controllers\HotelController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,4 +39,13 @@ Route::apiResource('services',CityController::class);
 Route::apiResource('hotels',HotelController::class);
 
 
+//about
+Route::middleware(['auth:api', 'admin'])->group(function () {
+    Route::post('/about',[AboutController::class,'store']);
+    Route::put('/about/{about}',[AboutController::class,'update']);
+    Route::delete('about/{about}',[AboutController::class,'destroy']);
+    });
+   
+Route::get('/about',[AboutController::class,'index']);
+Route::get('/about/{about}',[AboutController::class,'show']);
 
