@@ -17,8 +17,11 @@ use App\Http\Controllers\AuthController;
 |
 */
 
-
-
+/**
+ * Auth Routes
+ *
+ * These routes handle user authentication, including login, registration, and logout.
+*/
 Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'
@@ -31,10 +34,46 @@ Route::group([
 Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']);
 
 
+/**
+ *  Routes for visistor
+ *
+ * These Groupe handle the routes that allowed for all visitors
+*/
 
+// Hotel routes (show and list all hotels)
+Route::get('hotels/{hotel}', [HotelController::class, 'show']);
+Route::get('hotels', [HotelController::class, 'index']);
+
+
+
+/**
+ *  Route Groupe
+ *
+ * These Groupe handle all routes that need authentication
+*/
+Route::middleware('auth')->group(function () {
+
+
+});
+
+
+/**
+ *  Route Groupe for admin Routes
+ *
+ * These Groupe handle the routes that allowed just for admin and his dashboard
+*/
+Route::middleware(['auth', 'admin'])->group(function () {
+
+    // Hotels Routes (Store , update ,Delete)
+    Route::post('hotels',[HotelController::class,'store']);
+    Route::put('hotels/{hotel}', [HotelController::class, 'update']);
+
+});
+
+Route::delete('hotels/{hotel}', [HotelController::class, 'destroy'])->middleware(['auth', 'admin']);
 Route::apiResource('cities',CityController::class);
 Route::apiResource('services',CityController::class);
-Route::apiResource('hotels',HotelController::class);
+
 
 
 
