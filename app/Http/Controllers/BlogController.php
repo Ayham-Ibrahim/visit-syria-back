@@ -20,21 +20,25 @@ class BlogController extends Controller
         try {
 
             $query = Blog::select(
-                'title',
-                'created_at',
-                'id',
+                'blog.title',
+                'blog.created_at',
+                'blog.id',
             );
 
-            if ($request->has('title')) {
-                $query->where('title', 'like', '%' . $request->title . '%');
-            }
+            // if ($request->has('title')) {
+            //     $query->where('title', 'like', '%' . $request->title . '%');
+            // }
 
-            if ($request->has('created_at')) {
-                $query->where('created_at', '=', $request->created_at);
-            }
+            // if ($request->has('created_at')) {
+            //     $query->where('created_at', '=', $request->created_at);
+            // }
 
-            if ($request->has('id')) {
-                $query->where('id', '=', $request->id);
+            // if ($request->has('id')) {
+            //     $query->where('id', '=', $request->id);
+            // }
+            if ($request->has('sort_by')) {
+                $sortBy = $request->sort_by;
+                $query->orderBy($sortBy, 'asc');
             }
 
             $blogs = $query->paginate(9);
