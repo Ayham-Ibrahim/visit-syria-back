@@ -20,6 +20,7 @@ class HotelController extends Controller
      */
     public function index(Request $request)
     {
+
         try {
             $query = Hotel::select('hotels.id', 'hotels.name', 'hotels.location', 'cities.name as city_name', 'hotels.primary_description', 'hotels.secondary_description', 'hotels.price', 'hotels.cover_image', 'hotels.logo')
                             ->join('cities', 'hotels.city_id', '=', 'cities.id');
