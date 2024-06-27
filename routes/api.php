@@ -1,5 +1,7 @@
 <?php
 
+
+use App\Http\Controllers\BlogController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -63,6 +65,13 @@ Route::get('hotels', [HotelController::class, 'index']);
 Route::middleware('auth')->group(function () {
 
 
+
+
+Route::get('/blogs', [BlogController::class, 'index']);
+Route::post('/add', [BlogController::class, 'store']);
+Route::get('/blog/{blog}', [BlogController::class, 'show']);
+Route::put('/update/{blog}', [BlogController::class, 'update']);
+Route::delete('/blog/{blog}', [BlogController::class, 'destroy']);
 
 
 

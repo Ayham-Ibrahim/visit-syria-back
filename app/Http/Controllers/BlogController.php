@@ -9,19 +9,47 @@ use Illuminate\Support\Facades\Log;
 
 class BlogController extends Controller
 {
-     use ApiResponseTrait;
+    use ApiResponseTrait;
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $blog = Blog::all();
+        return response()->json($blog);
         try {
-            $blog = Blog::paginate();
+
+            $query = Blog::select(
+                'blog.title',
+                'blog.created_at',
+                'blog.id',
+            );
+
+            // if ($request->has('title')) {
+            //     $query->where('title', 'like', '%' . $request->title . '%');
+            // }
+
+            // if ($request->has('created_at')) {
+            //     $query->where('created_at', '=', $request->created_at);
+            // }
+
+            // if ($request->has('id')) {
+            //     $query->where('id', '=', $request->id);
+            // }
+            if ($request->has('sort_by')) {
+                $sortBy = $request->sort_by;
+                $query->orderBy($sortBy, 'asc');
+            }
+
+            $blogs = $query->paginate(9);
+
+            return $this->paginated($blogs, 'Done', 200);
+
             return $this->successResponse($blog, 'Done', 200);
             // return $this->paginated($blog, 'Done', 200);
         } catch (\Throwable $th) {
             Log::error($th);
-            return $this->errorResponse(null,"there is something wrong in server",500);
+            return $this->errorResponse(null, "there is something wrong in server", 500);
         }
     }
 
@@ -30,14 +58,31 @@ class BlogController extends Controller
      */
     public function store(Request $request)
     {
+        $data = $request->validate([
+            'title' => 'required|string',
+            'content' => 'required|string',
+            'main_image' => 'required|file|image|mimes:png,jpg|max:10000|mimetypes:image/jpeg,image/png,image/jpg',
+            // 'category' => 'in:الطبيعة,الاثرية',
+            // 'city_id' => 'required|exists:cities,id'
+        ]);
+
         try {
+            if ($request->hasFile('main_image')) {
+                $filename = time() . '_' . $request->file('main_image')->getClientOriginalName();
+                $request->file('main_image')->move(public_path('images'), $filename);
+                $data['main_image'] = 'images/' . $filename;
+            }
             $blog = Blog::create([
-                //
+                'title' => $data['title'],
+                'content' => $data['content'],
+                'main_image' => $data['main_image'],
+                // 'category' => $data['category'],
+                // 'city_id' => $data['city_id']
             ]);
             return $this->successResponse($blog, 'Created Successfuly', 200);
         } catch (\Throwable $th) {
             Log::error($th);
-            return $this->errorResponse(null,"there is something wrong in server",500);
+            return $this->errorResponse(null, "there is something wrong in server", 500);
         }
     }
 
@@ -50,7 +95,7 @@ class BlogController extends Controller
             return $this->successResponse($blog, 'Done', 200);
         } catch (\Throwable $th) {
             Log::error($th);
-            return $this->errorResponse(null,"there is something wrong in server",500);
+            return $this->errorResponse(null, "there is something wrong in server", 500);
         }
     }
 
@@ -59,13 +104,27 @@ class BlogController extends Controller
      */
     public function update(Request $request, Blog $blog)
     {
+        $data = $request->validate([
+            'title' => 'sometimes|required|string',
+            'content' => 'sometimes|required|string',
+            'main_image' => 'sometimes|file|image|mimes:png,jpg|max:10000|mimetypes:image/jpeg,image/png,image/jpg',
+            // 'category' => 'sometimes|required|in:الطبيعة,الاثرية',
+            // 'city_id' => 'sometimes|required|exists:cities,id'
+        ]);
+
         try {
-            // $blog->nn = $request->input('nn') ?? $blog->nn;
+            foreach ($data as $key => $value) {
+                if ($key == 'main_image' && $request->hasFile('main_image')) {
+                    $blog->main_image = $request->file('main_image')->store('main_images', 'public');
+                } else {
+                    $blog->$key = $value;
+                }
+            }
             $blog->save();
             return $this->successResponse($blog, ' Updated Successfuly', 200);
         } catch (\Throwable $th) {
             Log::error($th);
-            return $this->errorResponse(null,"there is something wrong in server",500);
+            return $this->errorResponse(null, "there is something wrong in server", 500);
         }
     }
 
@@ -76,10 +135,10 @@ class BlogController extends Controller
     {
         try {
             $blog->delete();
-            return $this->successResponse(null,'deleted successfully', 200);
+            return $this->successResponse(null, 'deleted successfully', 200);
         } catch (\Throwable $th) {
             Log::error($th);
-            return $this->errorResponse(null,"there is something wrong in server",500);
+            return $this->errorResponse(null, "there is something wrong in server", 500);
         }
     }
 }
