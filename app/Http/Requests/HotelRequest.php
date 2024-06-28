@@ -30,8 +30,8 @@ class HotelRequest extends FormRequest
             'name'                  => ['required','string','min:2','max:20'],
             'location'              => ['required','string','min:5','max:255'],
             'city_id'               => ['required','integer','exists:cities,id','min:1'],
-            'primary_description'   => ['required','string','min:5','max:255'],
-            'secondary_description' => ['required','string','min:5','max:255'],
+            'primary_description'   => ['required','string','min:5'],
+            'secondary_description' => ['required','string','min:5'],
             'price'                 => ['required','numeric','min:0'],
             'cover_image'           => 'required|file|image|mimes:png,jpg,jpeg,jfif|max:10000|mimetypes:image/jpeg,image/png,image/jpg,image/jfif',
             'logo'                  => 'required|file|image|mimes:png,jpg,jpeg,jfif|max:10000|mimetypes:image/jpeg,image/png,image/jpg,image/jfif',
@@ -39,7 +39,7 @@ class HotelRequest extends FormRequest
             'images'                 => 'array', // Ensure images is an array
         ];
     }
-    
+
     protected function failedValidation(Validator $Validator){
         $errors = $Validator->errors()->all();
         throw new HttpResponseException($this->errorResponse($errors,'Validation error',422));

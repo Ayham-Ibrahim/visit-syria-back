@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Traits\ApiResponseTrait;
 use App\Models\Blog;
 use Illuminate\Http\Request;
+use App\Http\Requests\BlogRequest;
+use App\Http\Requests\BlogResuest;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Http\Traits\ApiResponseTrait;
 
 class BlogController extends Controller
 {
@@ -15,38 +18,18 @@ class BlogController extends Controller
      */
     public function index(Request $request)
     {
-        $blog = Blog::all();
-        return response()->json($blog);
         try {
-
             $query = Blog::select(
                 'blog.title',
                 'blog.created_at',
                 'blog.id',
             );
-
-            // if ($request->has('title')) {
-            //     $query->where('title', 'like', '%' . $request->title . '%');
-            // }
-
-            // if ($request->has('created_at')) {
-            //     $query->where('created_at', '=', $request->created_at);
-            // }
-
-            // if ($request->has('id')) {
-            //     $query->where('id', '=', $request->id);
-            // }
             if ($request->has('sort_by')) {
                 $sortBy = $request->sort_by;
                 $query->orderBy($sortBy, 'asc');
             }
-
             $blogs = $query->paginate(9);
-
             return $this->paginated($blogs, 'Done', 200);
-
-            return $this->successResponse($blog, 'Done', 200);
-            // return $this->paginated($blog, 'Done', 200);
         } catch (\Throwable $th) {
             Log::error($th);
             return $this->errorResponse(null, "there is something wrong in server", 500);
@@ -56,31 +39,22 @@ class BlogController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(BlogRequest $request)
     {
-        $data = $request->validate([
-            'title' => 'required|string',
-            'content' => 'required|string',
-            'main_image' => 'required|file|image|mimes:png,jpg|max:10000|mimetypes:image/jpeg,image/png,image/jpg',
-            // 'category' => 'in:الطبيعة,الاثرية',
-            // 'city_id' => 'required|exists:cities,id'
-        ]);
-
         try {
-            if ($request->hasFile('main_image')) {
-                $filename = time() . '_' . $request->file('main_image')->getClientOriginalName();
-                $request->file('main_image')->move(public_path('images'), $filename);
-                $data['main_image'] = 'images/' . $filename;
-            }
+            DB::beginTransaction();
             $blog = Blog::create([
-                'title' => $data['title'],
-                'content' => $data['content'],
-                'main_image' => $data['main_image'],
-                // 'category' => $data['category'],
-                // 'city_id' => $data['city_id']
+                'title' => $request->title,
+                'content' => $request->content,
+                'category' => $request->category,
+                'city_id' => $request->city_id,
+                'main_image' => $this->storeFile($request->main_image, 'blog'),
             ]);
+            $this->storeAndAssociateImages($blog, $request->images, 'blog');
+            DB::commit();
             return $this->successResponse($blog, 'Created Successfuly', 200);
         } catch (\Throwable $th) {
+            DB::rollback();
             Log::error($th);
             return $this->errorResponse(null, "there is something wrong in server", 500);
         }
@@ -102,25 +76,18 @@ class BlogController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Blog $blog)
+    public function update(BlogRequest $request, Blog $blog)
     {
-        $data = $request->validate([
-            'title' => 'sometimes|required|string',
-            'content' => 'sometimes|required|string',
-            'main_image' => 'sometimes|file|image|mimes:png,jpg|max:10000|mimetypes:image/jpeg,image/png,image/jpg',
-            // 'category' => 'sometimes|required|in:الطبيعة,الاثرية',
-            // 'city_id' => 'sometimes|required|exists:cities,id'
-        ]);
-
         try {
-            foreach ($data as $key => $value) {
-                if ($key == 'main_image' && $request->hasFile('main_image')) {
-                    $blog->main_image = $request->file('main_image')->store('main_images', 'public');
-                } else {
-                    $blog->$key = $value;
-                }
-            }
+            DB::beginTransaction();
+            $blog->title = $request->input('title') ?? $blog->title;
+            $blog->content = $request->input('content') ?? $blog->content;
+            $blog->category = $request->input('category') ?? $blog->category;
+            $blog->city_id = $request->input('city_id') ?? $blog->city_id;
+            $blog->main_image = $this->fileExists($request->main_image, 'blog') ?? $blog->main_image;
+            $this->updateAndAssociateNewImages($blog, $request->images, 'blog');
             $blog->save();
+            DB::commit();
             return $this->successResponse($blog, ' Updated Successfuly', 200);
         } catch (\Throwable $th) {
             Log::error($th);

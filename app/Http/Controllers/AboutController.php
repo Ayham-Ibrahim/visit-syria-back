@@ -14,8 +14,8 @@ use App\Http\Requests\About\UpdateAboutRequest;
 
 class AboutController extends Controller
 {
-     use ApiResponseTrait;
-     use FileStorageTrait;
+    use ApiResponseTrait;
+    use FileStorageTrait;
     /**
      * Display a listing of the resource.
      */
@@ -23,16 +23,12 @@ class AboutController extends Controller
     {
         try {
             $query = About::select('id', 'title', 'category', 'content', 'main_image');
-
-
             if ($request->has('sort_by')) {
                 $sortBy = $request->sort_by;
                 $query->orderBy($sortBy, 'asc');
             }
-
             $about = $query->paginate(9);
             return $this->paginated($about, 'Done', 200);
-
         } catch (\Throwable $th) {
             Log::debug($th);
             Log::error($th->getMessage());
