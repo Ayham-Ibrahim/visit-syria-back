@@ -33,11 +33,11 @@ class UpdateResturantRequest extends FormRequest
             'secondary_description' => 'nullable',
             'logo' => 'nullable|file|image|mimes:png,jpg|max:10000|mimetypes:image/jpeg,image/png,image/jpg',
             'cover_image' => 'nullable|file|image|mimes:png,jpg|max:10000|mimetypes:image/jpeg,image/png,image/jpg',
-            'table_price' => 'nullable|file|image|mimes:png,jpg|max:10000|mimetypes:image/jpeg,image/png,image/jpg',
+            'table_price' => 'numeric',
             'menu' => 'nullable',
             'services' => 'array|nullable',
             'services.*' => 'exists:services,id',
-        ];;
+        ];
     }
 
     protected function failedValidation(Validator $Validator){

@@ -34,8 +34,8 @@ class Restaurant extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'city_id' => 'integer',
-        'table_price'  => 'integer',
+        // 'city_id' => 'numeric',
+        // 'table_price'  => 'numeric',
         'images' => 'array',
     ];
 

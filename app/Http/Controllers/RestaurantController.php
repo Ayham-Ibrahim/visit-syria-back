@@ -20,7 +20,7 @@ class RestaurantController extends Controller
     public function index($page)
     {
         try {
-            $restaurants = Restaurant::paginate(9,'*', 'page', $page);
+            $restaurants = Restaurant::with('images')->paginate(9,'*', 'page', $page);
 
             return $this->successResponse($restaurants, 'Done', 200);
             // return $this->paginated($restaurant, 'Done', 200);

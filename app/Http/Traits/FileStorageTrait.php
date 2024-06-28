@@ -6,7 +6,6 @@ use Exception;
 use App\Models\Image;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use League\Flysystem\Visibility;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
