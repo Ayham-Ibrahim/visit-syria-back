@@ -34,6 +34,27 @@ class Restaurant extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        //
+        // 'city_id' => 'numeric',
+        // 'table_price'  => 'numeric',
+        'images' => 'array',
     ];
+
+
+    public function city() {
+        return $this->belongsTo(City::class);
+    }
+
+    public function services() {
+        return $this->belongsToMany(Service::class, 'resturant_services');
+    }
+
+    public function getCityIdAttribute($value) {
+        $cityName = City::find($value)->name;
+        return $cityName;
+    }
+
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
 }
