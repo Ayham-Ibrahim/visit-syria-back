@@ -24,7 +24,7 @@ class Blog extends Model
         'content',
         'category',
         'main_image',
-        'city_id',
+        // 'city_id',
     ];
 
     /**

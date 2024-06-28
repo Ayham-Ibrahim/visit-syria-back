@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('blogs', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            // $table->foreignId('city_id')->constrained('cities')->cascadeOnDelete();
+            $table->foreignId('city_id')->constrained('cities')->cascadeOnDelete();
             $table->text('content');
-            // $table->enum('category', ['الطبيعة', 'الاثرية']);
+            $table->enum('category', ['الطبيعة', 'الاثرية']);
             $table->string('main_image');
             $table->softDeletes();
             $table->timestamps();

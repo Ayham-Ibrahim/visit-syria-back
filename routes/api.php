@@ -38,7 +38,6 @@ Route::group([
     Route::get('/user-profile', [AuthController::class, 'userProfile']);
 });
 Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']);
-
 Route::middleware('auth:api')->put('/update-user/{user}', [AuthController::class, 'update']);
 Route::middleware('auth:api')->put('/admin-update/{user}', [UserController::class, 'updateAdmin']);
 Route::middleware('auth:api')->put('/admin-update-photo/{user}', [UserController::class, 'updateAdminImage']);
@@ -49,51 +48,21 @@ Route::middleware('auth:api')->delete('/admin-delete-photo/{user}', [UserControl
  *
  * These Groupe handle the routes that allowed for all visitors
 */
-
-// Hotel routes (show and list all hotels)
+# Hotel routes (show and list all hotels)
 Route::get('hotels/{hotel}', [HotelController::class, 'show']);
 Route::get('hotels', [HotelController::class, 'index']);
 
-
-
-Route::group(['prefix' => 'restaurants'], function () {
-    Route::get('/page/{page}', [RestaurantController::class, 'index']);
-    Route::get('/by_city/{city_id}', [RestaurantController::class, 'showByCity']);
-    Route::get('/sort/{sort_by}', [RestaurantController::class, 'showStored']);
-    Route::get('/{restaurant}', [RestaurantController::class, 'show']);
-
-    Route::post('/create', [RestaurantController::class, 'store'])
-    ->middleware(['auth','admin']);
-
-    Route::post('/update/{restaurant}', [RestaurantController::class, 'update'])
-    ->middleware(['auth','admin']);
-
-    Route::delete('/delete/{restaurant}', [RestaurantController::class, 'destroy'])
-    ->middleware(['auth','admin']);
-});
-
-Route::apiResource('cities',CityController::class);
-Route::apiResource('services',ServiceController::class);
-Route::apiResource('hotels',HotelController::class);
-/**
- *  Route Groupe
- *
- * These Groupe handle all routes that need authentication
-*/
-Route::middleware('auth')->group(function () {
-
-
-
-
+# Blog routes (show and list all hotels)
 Route::get('/blogs', [BlogController::class, 'index']);
-Route::post('/add', [BlogController::class, 'store']);
 Route::get('/blog/{blog}', [BlogController::class, 'show']);
-Route::put('/update/{blog}', [BlogController::class, 'update']);
-Route::delete('/blog/{blog}', [BlogController::class, 'destroy']);
 
+# Landmark routes (show and list all hotels)
+Route::get('landmarks', [LandmarkController::class, 'index']);
+Route::get('landmarks/{landmark}', [LandmarkController::class, 'show']);
 
-
-});
+# AboutSyria routes (show and list all hotels)
+Route::get('/about',[AboutController::class,'index']);
+Route::get('/about/{about}',[AboutController::class,'show']);
 
 
 /**
@@ -103,36 +72,45 @@ Route::delete('/blog/{blog}', [BlogController::class, 'destroy']);
 */
 Route::middleware(['auth', 'admin'])->group(function () {
 
-    // Hotels Routes (Store , update ,Delete)
+    # Hotels Routes (Store , update ,Delete)
     Route::post('hotels',[HotelController::class,'store']);
     Route::put('hotels/{hotel}', [HotelController::class, 'update']);
+
+    # Blog Routes (Store , update ,Delete)
+    Route::post('/add', [BlogController::class, 'store']);
+    Route::put('/update/{blog}', [BlogController::class, 'update']);
+    Route::delete('/blog/{blog}', [BlogController::class, 'destroy']);
+
+    # AboutSyria Routes (Store , update ,Delete)
+    Route::post('/about',[AboutController::class,'store']);
+    Route::put('/about/{about}',[AboutController::class,'update']);
+    Route::delete('about/{about}',[AboutController::class,'destroy']);
+
+    # landmarks Routes (Store , update ,Delete)
+    Route::post('landmarks', [LandmarkController::class, 'store']);
+    Route::put('landmarks/{landmark}', [LandmarkController::class, 'update']);
+    Route::delete('landmarks/{landmark}', [LandmarkController::class, 'destroy']);
 
 });
 
 Route::delete('hotels/{hotel}', [HotelController::class, 'destroy'])->middleware(['auth', 'admin']);
+
 Route::apiResource('cities',CityController::class);
-Route::apiResource('services',CityController::class);
-
-//about
-Route::middleware(['auth:api', 'admin'])->group(function () {
-    Route::post('/about',[AboutController::class,'store']);
-    Route::put('/about/{about}',[AboutController::class,'update']);
-    Route::delete('about/{about}',[AboutController::class,'destroy']);
-    });
-
-Route::get('/about',[AboutController::class,'index']);
-Route::get('/about/{about}',[AboutController::class,'show']);
+Route::apiResource('services',ServiceController::class);
 
 
+Route::group(['prefix' => 'restaurants'], function () {
+    Route::get('/page', [RestaurantController::class, 'index']);
+    Route::get('/by_city/{city_id}', [RestaurantController::class, 'showByCity']);
+    Route::get('/sort/{sort_by}', [RestaurantController::class, 'showStored']);
+    Route::get('/{restaurant}', [RestaurantController::class, 'show']);
 
+    Route::post('/create', [RestaurantController::class, 'store'])
+    ->middleware(['auth','admin']);
 
-Route::middleware("admin")->group(function () {
-    Route::post('landmarks', [LandmarkController::class, 'store']);
-    Route::put('landmarks/{landmark}', [LandmarkController::class, 'update']);
-    Route::delete('landmarks/{landmark}', [LandmarkController::class, 'destroy']);
+    Route::put('/update/{restaurant}', [RestaurantController::class, 'update'])
+    ->middleware(['auth','admin']);
+
+    Route::delete('/delete/{restaurant}', [RestaurantController::class, 'destroy'])
+    ->middleware(['auth','admin']);
 });
-
-Route::get('landmarks', [LandmarkController::class, 'index']);
-Route::get('landmarks/{landmark}', [LandmarkController::class, 'show']);
-
-
