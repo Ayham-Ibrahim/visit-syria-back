@@ -17,12 +17,22 @@ class RestaurantController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($page)
+    public function index(Request $request)
     {
         try {
-            $restaurants = Restaurant::with('images')->paginate(9,'*', 'page', $page);
+            $query = Restaurant::join('cities', 'hotels.city_id', '=', 'cities.id');
 
-            return $this->successResponse($restaurants, 'Done', 200);
+            if ($request->has('city')) {
+                $query->where('cities.name', $request->city);
+            }
+
+            if ($request->has('sort_by')) {
+                $sortBy = $request->sort_by;
+                $query->orderBy($sortBy, 'asc');
+            }
+            $restaurants = $query->paginate(9);
+
+            return $this->paginated($restaurants, 'Done', 200);
             // return $this->paginated($restaurant, 'Done', 200);
         } catch (\Throwable $th) {
             Log::error($th);
@@ -130,9 +140,7 @@ class RestaurantController extends Controller
             $restaurant->table_price = $request->input('table_price') ?? $restaurant->table_price;
             $restaurant->menu = $this->fileExists($request->menu, 'resturant') ?? $restaurant->menu;
 
-            if(!empty($request->images)){
-                $this->storeAndAssociateImages($restaurant, $request->images, 'resturant');
-            }
+            $this->updateAndAssociateNewImages($restaurant, $request->images, 'resturant');
 
             $restaurant->save();
             DB::commit();

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Image extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -31,7 +31,8 @@ class Image extends Model
         //
     ];
 
-    public function imageable(){
+    public function imageable()
+    {
         return $this->morphTo();
     }
 }

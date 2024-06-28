@@ -31,4 +31,8 @@ class About extends Model
     protected $casts = [
         //
     ];
+    public function images()
+    {
+      return $this->MorphMany(Image::class,'imageable');
+    }
 }
