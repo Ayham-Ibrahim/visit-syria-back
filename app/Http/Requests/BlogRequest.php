@@ -34,6 +34,8 @@ class BlogRequest extends FormRequest
             'category'              => ['required',
                                         Rule::in('الطبيعة' , 'الاثرية'),
                                     ],
+            'images.*'              => 'required|file|image|mimes:png,jpg,jpeg,jfif|max:10000|mimetypes:image/jpeg,image/png,image/jpg,image/jfif', // Validate each image individually
+            'images'                 => 'array', // Ensure images is an array
         ];
     }
 

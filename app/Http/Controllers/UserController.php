@@ -83,9 +83,11 @@ class UserController extends Controller
     {
         if ($user->is_admin) {
             try {
+                
                 DB::beginTransaction();
-                if ($user->image && Storage::exists($user->image) && $request->input('image')) {
-                    Storage::delete($user->image);
+                $filePath = public_path($user->image);
+                if (file_exists($filePath)) {
+                    unlink($filePath);
                 }
                 $user->image = $this->fileExists($request->image, 'user') ?? $user->image;
                 $user->save();
@@ -113,7 +115,10 @@ class UserController extends Controller
         if ($user->is_admin) {
             try {
                 DB::beginTransaction();
-                Storage::delete($user->image);
+                $filePath = public_path($user->image);
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
                 $user->image = null;
                 $user->save();
                 DB::commit();

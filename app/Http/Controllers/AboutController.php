@@ -55,7 +55,7 @@ class AboutController extends Controller
                ]);
                if($request->images){
 
-               $this->storeAndAssociateImages($about, $request->images, 'images-About');
+               $this->storeAndAssociateImages($about, $request->images, 'About');
                $about->images;
                }
                DB::commit();
@@ -132,23 +132,12 @@ class AboutController extends Controller
     {
         try {
 
-            $images=$about->images;
-
-            if ($images) {
-                foreach ($images as $image) {
-                    $image->forceDelete();
-                }
-                $about->forceDelete();
-            }
-            else{
-                $about->forceDelete();
-            }
-                 return $this->successResponse(null,'deleted successfully', 200);
+            $about->delete();
+            return $this->successResponse(null,'deleted successfully', 200);
         }
-         catch (\Throwable $th) {
+        catch (\Throwable $th) {
             Log::error($th);
             return $this->errorResponse(null,"there is something wrong in server",500);
         }
     }
-   
 }
