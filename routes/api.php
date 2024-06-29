@@ -52,4 +52,3 @@ Route::get('/about/{about}',[AboutController::class,'show']);
 
 //Rating
 Route::Post('/RateHotel/{id}',[RateController::class,'RateHotel'])->middleware(['auth']);
-Route::get('/total/{id}',[RateController::class,'Total_Rate']);
