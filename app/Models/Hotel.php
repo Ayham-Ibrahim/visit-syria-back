@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 
 class Hotel extends Model
@@ -69,10 +70,13 @@ class Hotel extends Model
                 } catch (Exception $e) {
                     Log::error("Error deleting file: {$e->getMessage()}");
                 }
-                // we can make delete for soft delete 
+                // we can make delete for soft delete
                 $image->forceDelete();
             });
         });
     }
-
+//Relation Morph
+    public function Rates(){
+     return $this->morphMany(Rate::class,'ratable');
+   }
 }

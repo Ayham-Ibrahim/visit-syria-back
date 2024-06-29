@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\RateController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\HotelController;
 
@@ -45,7 +46,10 @@ Route::middleware(['auth:api', 'admin'])->group(function () {
     Route::put('/about/{about}',[AboutController::class,'update']);
     Route::delete('about/{about}',[AboutController::class,'destroy']);
     });
-   
+
 Route::get('/about',[AboutController::class,'index']);
 Route::get('/about/{about}',[AboutController::class,'show']);
 
+//Rating
+Route::Post('/RateHotel/{id}',[RateController::class,'RateHotel'])->middleware(['auth']);
+Route::get('/total/{id}',[RateController::class,'Total_Rate']);
