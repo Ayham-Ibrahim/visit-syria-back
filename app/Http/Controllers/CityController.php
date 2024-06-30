@@ -9,14 +9,14 @@ use Illuminate\Support\Facades\Log;
 
 class CityController extends Controller
 {
-     use ApiResponseTrait;
+    use ApiResponseTrait;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         try {
-            $cities = City::select('name')->get();
+            $cities = City::select('name','id')->get();
             return $this->successResponse($cities, 'Done', 200);
         } catch (\Throwable $th) {
             Log::error($th);

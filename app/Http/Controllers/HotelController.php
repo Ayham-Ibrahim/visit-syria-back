@@ -14,19 +14,30 @@ use App\Http\Resources\HotelResource;
 
 class HotelController extends Controller
 {
-    use ApiResponseTrait,FileStorageTrait;
+    use ApiResponseTrait, FileStorageTrait;
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+
         try {
-            $hotels = Hotel::select(['id','name','location','city_id','primary_description','secondary_description','price','cover_image','logo'])->paginate(9);
-            // return $this->successResponse($hotels, 'Done', 200);
+            $query = Hotel::select('hotels.id', 'hotels.name', 'hotels.location', 'cities.name as city_name', 'hotels.primary_description', 'hotels.secondary_description', 'hotels.price', 'hotels.cover_image', 'hotels.logo')
+                ->join('cities', 'hotels.city_id', '=', 'cities.id');
+
+            if ($request->has('city')) {
+                $query->where('cities.name', $request->city);
+            }
+
+            if ($request->has('sort_by')) {
+                $sortBy = $request->sort_by;
+                $query->orderBy($sortBy, 'asc');
+            }
+            $hotels = $query->paginate(9);
             return $this->paginated($hotels, 'Done', 200);
         } catch (\Throwable $th) {
             Log::error($th);
-            return $this->errorResponse(null,"there is something wrong in server",500);
+            return $this->errorResponse(null, "there is something wrong in server", 500);
         }
     }
 
@@ -47,14 +58,14 @@ class HotelController extends Controller
                 'cover_image'           => $this->storeFile($request->cover_image, 'hotel'),
                 'logo'                  => $this->storeFile($request->logo, 'hotel'),
             ]);
-             // Assuming request->images is an array of image paths/files
+            // Assuming request->images is an array of image paths/files
             $this->storeAndAssociateImages($hotel, $request->images, 'hotel');
             DB::commit();
             return $this->successResponse(new HotelResource($hotel), 'Created Successfuly', 200);
         } catch (\Throwable $th) {
             DB::rollback();
             Log::error($th);
-            return $this->errorResponse(null,"there is something wrong in server",500);
+            return $this->errorResponse(null, "there is something wrong in server", 500);
         }
     }
 
@@ -67,7 +78,7 @@ class HotelController extends Controller
             return $this->successResponse(new HotelResource($hotel), 'Done', 200);
         } catch (\Throwable $th) {
             Log::error($th);
-            return $this->errorResponse(null,"there is something wrong in server",500);
+            return $this->errorResponse(null, "there is something wrong in server", 500);
         }
     }
 
@@ -87,16 +98,15 @@ class HotelController extends Controller
             $hotel->price = $request->input('price') ?? $hotel->price;
             $hotel->cover_image = $this->fileExists($request->cover_image, 'hotel') ?? $hotel->cover_image;
             $hotel->logo = $this->fileExists($request->logo, 'hotel') ?? $hotel->logo;
-            if(!empty($request->images)){
-                $this->updateAndAssociateNewImages($hotel, $request->images, 'hotel');
-            }
+            $this->updateAndAssociateNewImages($hotel, $request->images, 'hotel');
+
             $hotel->save();
             DB::commit();
             return $this->successResponse(new HotelResource($hotel), ' Updated Successfuly', 200);
         } catch (\Throwable $th) {
             DB::rollback();
             Log::error($th);
-            return $this->errorResponse(null,"there is something wrong in server",500);
+            return $this->errorResponse(null, "there is something wrong in server", 500);
         }
     }
 
@@ -107,10 +117,10 @@ class HotelController extends Controller
     {
         try {
             $hotel->delete();
-            return $this->successResponse(null,'deleted successfully', 200);
+            return $this->successResponse(null, 'deleted successfully', 200);
         } catch (\Throwable $th) {
             Log::error($th);
-            return $this->errorResponse(null,"there is something wrong in server",500);
+            return $this->errorResponse(null, "there is something wrong in server", 500);
         }
     }
 }
