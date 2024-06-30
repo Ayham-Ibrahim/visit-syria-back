@@ -34,22 +34,22 @@ class Blog extends Model
         //
     ];
 
-    public static function boot()
-    {
-        parent::boot();
+    // public static function boot()
+    // {
+    //     parent::boot();
 
-        static::deleting(function ($blog) {
-            $blog->images()->each(function ($image) {
-                try {
-                    $filePath = public_path($image->path);
-                    if (file_exists($filePath)) {
-                        unlink($filePath);
-                    }
-                } catch (Exception $e) {
-                    Log::error("Error deleting file: {$e->getMessage()}");
-                }
-                $image->forceDelete();
-            });
-        });
-    }
+    //     static::deleting(function ($blog) {
+    //         $blog->images()->each(function ($image) {
+    //             try {
+    //                 $filePath = public_path($image->path);
+    //                 if (file_exists($filePath)) {
+    //                     unlink($filePath);
+    //                 }
+    //             } catch (Exception $e) {
+    //                 Log::error("Error deleting file: {$e->getMessage()}");
+    //             }
+    //             $image->forceDelete();
+    //         });
+    //     });
+    // }
 }

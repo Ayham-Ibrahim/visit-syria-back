@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Traits\ApiResponseTrait;
 use App\Models\Blog;
+use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -133,12 +134,19 @@ class BlogController extends Controller
      */
     public function destroy(Blog $blog)
     {
-        try {
-            $blog->delete();
-            return $this->successResponse(null, 'deleted successfully', 200);
-        } catch (\Throwable $th) {
-            Log::error($th);
-            return $this->errorResponse(null, "there is something wrong in server", 500);
-        }
+        // try {
+        $blog->delete();
+        return $this->successResponse(null, 'deleted successfully', 200);
+        // } catch (\Throwable $th) {
+        //     Log::error($th);
+        //     return $this->errorResponse(null, "there is something wrong in server", 500);
+        // }
     }
-}
+
+    // public function destroy(Blog $blog)
+    // {
+    //     $blog = Blog::findOrFail($blog);
+    //     $blog->delete();
+    //     return to_route('blogs.index');
+    // }
+};
