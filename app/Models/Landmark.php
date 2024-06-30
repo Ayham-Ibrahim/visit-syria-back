@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 
 class Landmark extends Model
@@ -34,4 +35,16 @@ class Landmark extends Model
     protected $casts = [
         //
     ];
+     /**
+     * Get all of the comments for the document.
+     *
+     * This function defines a polymorphic relationship between the document model and the comment model,
+     * allowing the document to have many comments associated with it.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function comments() : MorphMany
+    {
+        return $this->morphMany(Comment::class,'commentable');
+    }
 }
