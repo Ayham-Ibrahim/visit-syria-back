@@ -2,9 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Exception;
+use App\Models\City;
+use App\Models\Image;
+use App\Models\Service;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 
 class Restaurant extends Model
@@ -34,6 +39,50 @@ class Restaurant extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        //
+    
     ];
+
+
+    public function city() {
+        return $this->belongsTo(City::class);
+    }
+
+    public function images() {
+        return $this->morphMany(Image::class,'imageable');
+    }
+
+    public function services() {
+        return $this->belongsToMany(Service::class, 'resturant_services');
+    }
+
+    // public function getCityIdAttribute($value) {
+    //     $cityName = City::find($value)->name;
+    //     return $cityName;
+    // }
+
+
+    
+    /**
+     * Delete the hotel and its associated images.
+     */
+    public static function boot()
+    {
+        parent::boot();
+        static::deleting(function ($restaurant) {
+            $restaurant->images()->each(function ($image) {
+                try {
+                    // Attempt to delete the file from the filesystem
+                    $filePath = public_path($image->path);
+                    if (file_exists($filePath)) {
+                        unlink($filePath);
+                    }
+                } catch (Exception $e) {
+                    Log::error("Error deleting file: {$e->getMessage()}");
+                }
+                // we can make delete for soft delete 
+                $image->forceDelete();
+            });
+        });
+    }
+
 }

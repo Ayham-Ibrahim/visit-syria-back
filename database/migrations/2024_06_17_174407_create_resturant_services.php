@@ -11,22 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('abouts', function (Blueprint $table) {
+        Schema::create('resturant_services', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->text('content')->nullable();
-            $table->enum('category',['الحضارات','التاريخ','الآثار','الطبيعة','السياحة']);
-            $table->string('main_image');
-            $table->softDeletes();
+            $table->unsignedBigInteger('service_id');
+            $table->unsignedBigInteger('resturant_id');
+
+            $table->foreign('service_id')->references('id')->on('services');
+            $table->foreign('resturant_id')->references('id')->on('restaurants');
             $table->timestamps();
         });
     }
 
     /**
      * Reverse the migrations.
-     */
+    */
+
     public function down(): void
     {
-        Schema::dropIfExists('abouts');
+        Schema::dropIfExists('resturant_services');
     }
 };

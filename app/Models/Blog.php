@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use Exception;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\City;
+use App\Models\Image;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Blog extends Model
 {
@@ -20,7 +22,7 @@ class Blog extends Model
     protected $fillable = [
         'title',
         'content',
-        // 'category',
+        'category',
         'main_image',
         // 'city_id',
     ];
@@ -34,9 +36,18 @@ class Blog extends Model
         //
     ];
 
-    // public static function boot()
-    // {
-    //     parent::boot();
+    
+    public function images() {
+        return $this->morphMany(Image::class,'imageable');
+    }
+
+    public function city() {
+        return $this->belongsTo(City::class);
+    }
+
+    public static function boot()
+    {
+        parent::boot();
 
     //     static::deleting(function ($blog) {
     //         $blog->images()->each(function ($image) {

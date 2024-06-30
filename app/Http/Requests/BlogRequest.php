@@ -2,13 +2,13 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use App\Http\Traits\ApiResponseTrait;
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Validation\Rules\Exists;
 
-class HotelRequest extends FormRequest
+class BlogRequest extends FormRequest
 {
     use ApiResponseTrait;
     /**
@@ -27,14 +27,13 @@ class HotelRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'                  => ['required','string','min:2','max:20'],
-            'location'              => ['required','string','min:5','max:255'],
+            'title'                 => ['required','string','min:2','max:20'],
             'city_id'               => ['required','integer','exists:cities,id','min:1'],
-            'primary_description'   => ['required','string','min:5'],
-            'secondary_description' => ['required','string','min:5'],
-            'price'                 => ['required','numeric','min:0'],
-            'cover_image'           => 'required|file|image|mimes:png,jpg,jpeg,jfif|max:10000|mimetypes:image/jpeg,image/png,image/jpg,image/jfif',
-            'logo'                  => 'required|file|image|mimes:png,jpg,jpeg,jfif|max:10000|mimetypes:image/jpeg,image/png,image/jpg,image/jfif',
+            'content'               => ['required','string','min:5'],
+            'main_image'            => 'required|file|image|mimes:png,jpg,jpeg,jfif|max:10000|mimetypes:image/jpeg,image/png,image/jpg,image/jfif',
+            'category'              => ['required',
+                                        Rule::in('الطبيعة' , 'الاثرية'),
+                                    ],
             'images.*'              => 'required|file|image|mimes:png,jpg,jpeg,jfif|max:10000|mimetypes:image/jpeg,image/png,image/jpg,image/jfif', // Validate each image individually
             'images'                 => 'array', // Ensure images is an array
         ];
