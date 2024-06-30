@@ -27,8 +27,12 @@ class AboutController extends Controller
                 $sortBy = $request->sort_by;
                 $query->orderBy($sortBy, 'asc');
             }
+            // for site
+            if ($request->has('category')) {
+                $query->where('category', $request->category);
+            }
             $about = $query->paginate(9);
-            return $this->paginated($about, 'Done', 200);
+            return $this->resourcePaginated(AboutResource::collection($about), 'Done', 200);
         } catch (\Throwable $th) {
             Log::debug($th);
             Log::error($th->getMessage());
