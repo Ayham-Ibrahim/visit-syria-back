@@ -29,4 +29,8 @@ class Service extends Model
     protected $casts = [
         //
     ];
+
+    public function resturants() {
+        return $this->belongsToMany(Restaurant::class, 'resturant_services');
+    }
 }

@@ -66,10 +66,8 @@ class AuthController extends Controller
             ['password' => bcrypt($request->password)]
         ));
         $token = JWTAuth::fromUser($user);
-
         return $this->createNewToken($token);
     }
-   
     /**
      * Log the user out (Invalidate the token).
      *

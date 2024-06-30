@@ -2,14 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Exception;
+use App\Models\City;
+use App\Models\Image;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Blog extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +24,7 @@ class Blog extends Model
         'content',
         'category',
         'main_image',
+        // 'city_id',
     ];
 
     /**
@@ -31,4 +35,32 @@ class Blog extends Model
     protected $casts = [
         //
     ];
+
+    
+    public function images() {
+        return $this->morphMany(Image::class,'imageable');
+    }
+
+    public function city() {
+        return $this->belongsTo(City::class);
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($blog) {
+            $blog->images()->each(function ($image) {
+                try {
+                    $filePath = public_path($image->path);
+                    if (file_exists($filePath)) {
+                        unlink($filePath);
+                    }
+                } catch (Exception $e) {
+                    Log::error("Error deleting file: {$e->getMessage()}");
+                }
+                $image->forceDelete();
+            });
+        });
+    }
 }

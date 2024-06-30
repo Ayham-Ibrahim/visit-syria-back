@@ -3,14 +3,18 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Log;
+use Exception;
+
+
 
 
 class Landmark extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -33,18 +37,55 @@ class Landmark extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        //
+       // 'images' => 'array',
     ];
-     /**
-     * Get all of the comments for the document.
-     *
-     * This function defines a polymorphic relationship between the document model and the comment model,
-     * allowing the document to have many comments associated with it.
+
+    /**
+     * Get the comments associated with this landmark.
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
-    public function comments() : MorphMany
+    public function comments(): MorphMany
     {
-        return $this->morphMany(Comment::class,'commentable');
+        return $this->morphMany(Comment::class, 'commentable');
+    }
+
+    //one to many relation between cities and landmarks
+    public function city()
+    {
+        return $this->belongsTo(City::class);
+    }
+
+    //morph relation between images and landmarks
+    public function images() :MorphMany
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
+
+    public function deleteImages()
+    {
+        // Delete the associated images
+        $this->images()->delete();
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($landmark) {
+            $landmark->images()->each(function ($image) {
+                try {
+                    // Attempt to delete the file from the filesystem
+                    $filePath = public_path($image->path);
+                    if (file_exists($filePath)) {
+                        unlink($filePath);
+                    }
+                } catch (Exception $e) {
+                    Log::error("Error deleting file: {$e->getMessage()}");
+                }
+                // we can make delete for soft delete 
+                $image->forceDelete();
+            });
+        });
     }
 }
