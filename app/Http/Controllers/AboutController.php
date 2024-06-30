@@ -27,6 +27,7 @@ class AboutController extends Controller
                 $sortBy = $request->sort_by;
                 $query->orderBy($sortBy, 'asc');
             }
+            // for site
             if ($request->has('category')) {
                 $query->where('category', $request->category);
             }
