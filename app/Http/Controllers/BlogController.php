@@ -35,8 +35,11 @@ class BlogController extends Controller
                 $sortBy = $request->sort_by;
                 $query->orderBy($sortBy, 'asc');
             }
+            if ($request->has('category')) {
+                $query->where('category', $request->category);
+            }
             $blogs = $query->paginate(9);
-            return $this->paginated($blogs, 'Done', 200);
+            return $this->resourcePaginated(BlogResource::collection($blogs), 'Done', 200);
         } catch (\Throwable $th) {
             Log::error($th);
             return $this->errorResponse(null, "there is something wrong in server", 500);
