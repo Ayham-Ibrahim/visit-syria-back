@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Log;
 use Exception;
+
 
 
 
@@ -38,7 +39,16 @@ class Landmark extends Model
     protected $casts = [
        // 'images' => 'array',
     ];
-    
+
+    /**
+     * Get the comments associated with this landmark.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function comments(): MorphMany
+    {
+        return $this->morphMany(Comment::class, 'commentable');
+    }
 
     //one to many relation between cities and landmarks
     public function city()

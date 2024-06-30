@@ -8,6 +8,7 @@ use App\Http\Controllers\BlogController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\LandmarkController;
@@ -38,10 +39,46 @@ Route::group([
     Route::get('/user-profile', [AuthController::class, 'userProfile']);
 });
 Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']);
-Route::middleware('auth:api')->put('/update-user/{user}', [AuthController::class, 'update']);
+Route::middleware('auth:api')->put('/update-user/{user}', [UserController::class, 'update']);
 Route::middleware('auth:api')->put('/admin-update/{user}', [UserController::class, 'updateAdmin']);
 Route::middleware('auth:api')->put('/admin-update-photo/{user}', [UserController::class, 'updateAdminImage']);
 Route::middleware('auth:api')->delete('/admin-delete-photo/{user}', [UserController::class, 'deleteAdminImage']);
+
+
+
+/**
+ * Add a comment for a hotel.
+ *
+ * @param int $hotel The ID of the hotel to add the comment to.
+ * @return \Illuminate\Http\Response
+ */
+Route::post('/add-hotel-commnet/{hotel}', [CommentController::class, 'storeHotelComment']);
+Route::post('/add-landmark-commnet/{landmark}', [CommentController::class, 'storeLandmarkComment']);
+Route::post('/add-restaurant-commnet/{restaurant}', [CommentController::class, 'storeRestaurantComment']);
+/**
+ * Get a specific comment.
+ *
+ * @param int $comment The ID of the comment to retrieve.
+ * @return \Illuminate\Http\Response
+ */
+Route::get('/get-comment/{comment}', [CommentController::class, 'show']);
+/**
+ * Get the comments for a hotel.
+ *
+ * @param int $hotel The ID of the hotel to get the comments for.
+ * @return \Illuminate\Http\Response
+ */
+Route::get('/get-comments-hotel/{hotel}', [CommentController::class, 'hotelComments']);
+Route::get('/get-comments-landmark/{landmark}', [CommentController::class, 'landmarkComments']);
+Route::get('/get-comments-restaurant/{restaurant}', [CommentController::class, 'restaurantComments']);
+/**
+ * Delete a comment.
+ *
+ * @param int $comment The ID of the comment to delete.
+ * @return \Illuminate\Http\Response
+ */
+Route::delete('/delete-comment/{comment}', [CommentController::class, 'destroy']);
+
 
 /**
  *  Routes for visistor
