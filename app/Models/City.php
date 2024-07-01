@@ -44,7 +44,7 @@ class City extends Model
 
     public function blogs()
     {
-        return $this->hasManys(Blog::class);
+        return $this->hasMany(Blog::class);
     }
 
 
