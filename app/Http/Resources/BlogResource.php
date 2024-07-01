@@ -19,7 +19,9 @@ class BlogResource extends JsonResource
             'title' => $this->title,
             'content' => $this->content,
             'category' => $this->category,
-            // 'city_id' => $this->city->name,
+            'city' => $this->city->name,
+            'city_id' => $this->city_id,
+            'created_at' => $this->created_at,
             'main_image' => $this->main_image,
             'images' => $this->images->map(function ($image) {
                 return $image->path;
