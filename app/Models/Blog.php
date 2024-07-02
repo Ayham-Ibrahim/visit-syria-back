@@ -38,11 +38,13 @@ class Blog extends Model
     ];
 
 
-    public function images() {
-        return $this->morphMany(Image::class,'imageable');
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
     }
 
-    public function city() {
+    public function city()
+    {
         return $this->belongsTo(City::class);
     }
 
@@ -56,18 +58,19 @@ class Blog extends Model
     {
         parent::boot();
 
-    //     static::deleting(function ($blog) {
-    //         $blog->images()->each(function ($image) {
-    //             try {
-    //                 $filePath = public_path($image->path);
-    //                 if (file_exists($filePath)) {
-    //                     unlink($filePath);
-    //                 }
-    //             } catch (Exception $e) {
-    //                 Log::error("Error deleting file: {$e->getMessage()}");
-    //             }
-    //             $image->forceDelete();
-    //         });
-    //     });
-    // }
+        //     static::deleting(function ($blog) {
+        //         $blog->images()->each(function ($image) {
+        //             try {
+        //                 $filePath = public_path($image->path);
+        //                 if (file_exists($filePath)) {
+        //                     unlink($filePath);
+        //                 }
+        //             } catch (Exception $e) {
+        //                 Log::error("Error deleting file: {$e->getMessage()}");
+        //             }
+        //             $image->forceDelete();
+        //         });
+        //     });
+        // }
+    }
 }
