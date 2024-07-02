@@ -22,6 +22,7 @@ class AboutController extends Controller
     public function index(Request $request)
     {
         try {
+            $perPage = $request->input('per_page', 9); // Default to 15 if not provided
             $query = About::select('id', 'title', 'category', 'content', 'main_image');
             if ($request->has('sort_by')) {
                 $sortBy = $request->sort_by;
@@ -31,7 +32,7 @@ class AboutController extends Controller
             if ($request->has('category')) {
                 $query->where('category', $request->category);
             }
-            $about = $query->paginate(9);
+            $about = $query->paginate($perPage);
             return $this->resourcePaginated(AboutResource::collection($about), 'Done', 200);
         } catch (\Throwable $th) {
             Log::debug($th);
