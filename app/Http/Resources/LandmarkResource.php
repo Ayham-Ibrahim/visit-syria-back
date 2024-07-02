@@ -23,6 +23,7 @@ class LandmarkResource extends JsonResource
             'internal_image'        => $this->internal_image,
             'external_image'        => $this->external_image,
             'city'                  => $this->city->name,
+            'city_id'                  => $this->city_id,
             'images'                => $this->images->pluck('path'),
         ];
     }

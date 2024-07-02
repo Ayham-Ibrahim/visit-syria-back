@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Exception;
+use Carbon\Carbon;
 use App\Models\City;
 use App\Models\Image;
 use Illuminate\Support\Facades\Log;
@@ -24,7 +25,7 @@ class Blog extends Model
         'content',
         'category',
         'main_image',
-        // 'city_id',
+        'city_id',
     ];
 
     /**
@@ -36,13 +37,19 @@ class Blog extends Model
         //
     ];
 
-    
+
     public function images() {
         return $this->morphMany(Image::class,'imageable');
     }
 
     public function city() {
         return $this->belongsTo(City::class);
+    }
+
+    public function getCreatedAtAttribute($value)
+    {
+        $date = Carbon::parse($value);
+        return $date->format('d-m-Y H:i:s');
     }
 
     public static function boot()

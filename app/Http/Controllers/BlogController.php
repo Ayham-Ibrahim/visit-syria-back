@@ -22,16 +22,8 @@ class BlogController extends Controller
      */
     public function index(Request $request)
     {
-        try {
-            $query = Blog::select(
-                'blogs.title',
-                'blogs.created_at',
-                'blogs.id',
-                'blogs.category',
-                // 'cities.name as city_name',
-                'blogs.main_image',
-                DB::raw("DATE_FORMAT(blogs.created_at, '%d/%m/%Y %H:%i:%s') as formatted_created_at"),
-            );
+        // try {
+            $query = Blog::with('city');
             if ($request->has('sort_by')) {
                 $sortBy = $request->sort_by;
                 $query->orderBy($sortBy, 'asc');
@@ -42,10 +34,10 @@ class BlogController extends Controller
             }
             $blogs = $query->paginate(9);
             return $this->resourcePaginated(BlogResource::collection($blogs), 'Done', 200);
-        } catch (\Throwable $th) {
-            Log::error($th);
-            return $this->errorResponse(null, "there is something wrong in server", 500);
-        }
+        // } catch (\Throwable $th) {
+        //     Log::error($th);
+        //     return $this->errorResponse(null, "there is something wrong in server", 500);
+        // }
     }
 
     /**
@@ -59,7 +51,7 @@ class BlogController extends Controller
                 'title' => $request->title,
                 'content' => $request->content,
                 'category' => $request->category,
-                // 'city_id' => $request->city_id,
+                'city_id' => $request->city_id,
                 'main_image' => $this->storeFile($request->main_image, 'blog'),
             ]);
             $this->storeAndAssociateImages($blog, $request->images, 'blog');
@@ -95,7 +87,7 @@ class BlogController extends Controller
             $blog->title = $request->input('title') ?? $blog->title;
             $blog->content = $request->input('content') ?? $blog->content;
             $blog->category = $request->input('category') ?? $blog->category;
-            // $blog->city_id = $request->input('city_id') ?? $blog->city_id;
+            $blog->city_id = $request->input('city_id') ?? $blog->city_id;
             $blog->main_image = $this->fileExists($request->main_image, 'blog') ?? $blog->main_image;
             $this->updateAndAssociateNewImages($blog, $request->images, 'blog');
             $blog->save();
