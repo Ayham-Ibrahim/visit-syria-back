@@ -21,7 +21,7 @@ class BlogController extends Controller
      */
     public function index(Request $request)
     {
-        // try {
+        try {
             $query = Blog::with('city');
             if ($request->has('sort_by')) {
                 $sortBy = $request->sort_by;
@@ -33,10 +33,10 @@ class BlogController extends Controller
             }
             $blogs = $query->paginate(9);
             return $this->resourcePaginated(BlogResource::collection($blogs), 'Done', 200);
-        // } catch (\Throwable $th) {
-        //     Log::error($th);
-        //     return $this->errorResponse(null, "there is something wrong in server", 500);
-        // }
+        } catch (\Throwable $th) {
+            Log::error($th);
+            return $this->errorResponse(null, "there is something wrong in server", 500);
+        }
     }
 
     /**
