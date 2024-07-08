@@ -57,7 +57,7 @@ class UserController extends Controller
                 $user->country = $request->input('country') ?? $user->country;
                 $user->email = $request->input('email') ?? $user->email;
                 $user->password = $request->input('password') ?? $user->password;
-
+                
                 $user->save();
                 DB::commit();
                 $user_updated = $user->only('name', 'country', 'email', 'image');

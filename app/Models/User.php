@@ -3,11 +3,13 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -47,6 +49,17 @@ class User extends Authenticatable implements JWTSubject
         'password' => 'hashed',
     ];
     /**
+     * The relationships to be touched when updating the model.
+     *
+     * This property specifies the relationships that should be touched (update the `updated_at` timestamp)
+     * when the model is updated.
+     *
+     * @var array<int, string>
+     */
+    protected $touches = [
+        'comments',
+    ];
+    /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
      * @return mixed
@@ -65,4 +78,17 @@ JWT.
     {
         return [];
     }
+    /**
+    * Get all of the comments for the user.
+    *
+    * This function defines a polymorphic relationship between the user model and the comment model,
+    * allowing the user to have many comments associated with it.
+    *
+    * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+    */
+   public function comments() : HasMany
+   {
+       return $this->hasMany(Comment::class);
+   }
+   
 }
