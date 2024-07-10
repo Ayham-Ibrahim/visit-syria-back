@@ -27,7 +27,7 @@ class BlogRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title'                 => ['required','string','min:2','max:20'],
+            'title'                 => ['required','string','min:2','max:50'],
             'city_id'               => ['required','integer','exists:cities,id','min:1'],
             'content'               => ['required','string','min:5'],
             'main_image'            => 'required|file|image|mimes:png,jpg,jpeg,jfif|max:10000|mimetypes:image/jpeg,image/png,image/jpg,image/jfif',

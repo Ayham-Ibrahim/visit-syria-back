@@ -79,7 +79,8 @@ class CommentController extends Controller
                 'comment_content' => $comment->comment_content,
                 'user_id' => $comment->user->id,
                 'user_name' => $comment->user->name,
-
+                'user_image' => $comment->user->image ? $comment->user->image : null,
+                'created_at' =>  $comment->created_at,
             ]);
         } catch (\Throwable $th) {
             Log::error($th);
@@ -108,7 +109,8 @@ class CommentController extends Controller
                 'comment_content' => $comment->comment_content,
                 'user_id' => $comment->user->id,
                 'user_name' => $comment->user->name,
-
+                'user_image' => $comment->user->image ? $comment->user->image : null,
+                'created_at' =>  $comment->created_at,
             ]);
         } catch (\Throwable $th) {
             Log::error($th);
@@ -137,6 +139,8 @@ class CommentController extends Controller
                 'comment_content' => $comment->comment_content,
                 'user_id' => $comment->user->id,
                 'user_name' => $comment->user->name,
+                'user_image' => $comment->user->image ? $comment->user->image : null,
+                'created_at' =>  $comment->created_at,
 
             ]);
         } catch (\Throwable $th) {

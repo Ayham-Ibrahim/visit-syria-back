@@ -5,6 +5,7 @@ namespace App\Models;
 use Exception;
 use App\Models\City;
 use App\Models\Image;
+use App\Models\Comment;
 use App\Models\Service;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;

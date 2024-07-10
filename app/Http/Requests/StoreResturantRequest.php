@@ -26,19 +26,19 @@ class StoreResturantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required',
-            'location' => 'required',
-            'city_id' => 'required|exists:cities,id',
-            'primary_description' => 'required',
-            'secondary_description' => 'required',
-            'logo' => 'required|file|image|mimes:png,jpg,jpeg|max:10000|mimetypes:image/jpeg,image/png,image/jpg',
-            'cover_image' => 'required|file|image|mimes:png,jpg,jpeg|max:10000|mimetypes:image/jpeg,image/png,image/jpg',
-            'table_price' => 'required|numeric',
-            'menu' => 'required|file|image|mimes:png,jpg,jpeg|max:10000|mimetypes:image/jpeg,image/png,image/jpg',
+            'name'                  => ['required','string','min:2','max:20'],
+            'location'              => ['required','string','min:5','max:255'],
+            'city_id'               => ['required','integer','exists:cities,id','min:1'],
+            'primary_description'   => ['required','string','min:5'],
+            'secondary_description' => ['required','string','min:5'],
+            'cover_image'           => 'required|file|image|mimes:png,jpg,jpeg,jfif|max:10000|mimetypes:image/jpeg,image/png,image/jpg,image/jfif',
+            'logo'                  => 'required|file|image|mimes:png,jpg,jpeg,jfif|max:10000|mimetypes:image/jpeg,image/png,image/jpg,image/jfif',
+            'table_price'           => ['required','numeric','min:0'],
+            'menu'                  => 'required|file|image|mimes:png,jpg,jpeg,jfif|max:10000|mimetypes:image/jpeg,image/png,image/jpg,image/jfif',
             'services' => 'array|nullable',
             'services.*' => 'exists:services,id',
-            'images.*'   => 'required|file|image|mimes:png,jpg,jpeg,jfif|max:10000|mimetypes:image/jpeg,image/png,image/jpg,image/jfif', // Validate each image individually
-            'images'     => 'array', // Ensure images is an array
+            'images.*'              => 'required|file|image|mimes:png,jpg,jpeg,jfif|max:10000|mimetypes:image/jpeg,image/png,image/jpg,image/jfif', // Validate each image individually
+            'images'                 => 'array', // Ensure images is an array
         ];
     }
 

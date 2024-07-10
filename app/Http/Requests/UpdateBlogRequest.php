@@ -27,7 +27,7 @@ class UpdateBlogRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title'                 => ['nullable','string','min:2','max:20'],
+            'title'                 => ['nullable','string','min:2','max:50'],
             'city_id'               => ['nullable','integer','exists:cities,id','min:1'],
             'content'               => ['nullable','string','min:5'],
             'main_image'            => 'nullable|file|image|mimes:png,jpg,jpeg,jfif|max:10000|mimetypes:image/jpeg,image/png,image/jpg,image/jfif',

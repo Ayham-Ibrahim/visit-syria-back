@@ -40,5 +40,14 @@ class CitySeeder extends Seeder
         City::create([
             'name' => "دير الزور"
         ]);
+        City::create([
+            'name' => "اللاذقية"
+        ]);
+        City::create([
+            'name' => "طرطوس"
+        ]);
+        City::create([
+            'name' => "السويداء"
+        ]);
     }
 }
