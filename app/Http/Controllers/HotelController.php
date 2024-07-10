@@ -17,6 +17,8 @@ class HotelController extends Controller
     use ApiResponseTrait, FileStorageTrait;
     /**
      * Display a listing of the resource.
+     * 
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index(Request $request)
     {
@@ -43,6 +45,8 @@ class HotelController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     * 
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(HotelRequest $request)
     {
@@ -71,6 +75,8 @@ class HotelController extends Controller
 
     /**
      * Display the specified resource.
+     * 
+     * @return \Illuminate\Http\JsonResponse
      */
     public function show(Hotel $hotel)
     {
@@ -84,6 +90,8 @@ class HotelController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * 
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(UpdateHotelRequest $request, Hotel $hotel)
     {
@@ -112,6 +120,8 @@ class HotelController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     * 
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Hotel $hotel)
     {

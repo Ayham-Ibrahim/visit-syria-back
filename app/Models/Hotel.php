@@ -4,7 +4,9 @@ namespace App\Models;
 
 use Exception;
 use App\Models\City;
+use App\Models\Rate;
 use App\Models\Image;
+use App\Models\Comment;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
@@ -70,7 +72,7 @@ class Hotel extends Model
                 } catch (Exception $e) {
                     Log::error("Error deleting file: {$e->getMessage()}");
                 }
-                // we can make delete for soft delete 
+                // we can make delete for soft delete
                 $image->forceDelete();
             });
         });
@@ -87,4 +89,9 @@ class Hotel extends Model
     {
         return $this->morphMany(Comment::class,'commentable');
     }
+
+    //Relation Morph
+    public function Rates(){
+        return $this->morphMany(Rate::class,'ratable');
+      }
 }

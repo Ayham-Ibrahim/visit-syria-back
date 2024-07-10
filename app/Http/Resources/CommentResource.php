@@ -23,6 +23,7 @@ class CommentResource extends JsonResource
             'user'        => $this->user->name,
             'user_image' => $this->user->image,
             'comment_content' => $this->comment_content,
+            'created_at' => $this->created_at,
             'item'        => $this->getCommentItem($this->commentable_type, $this->commentable_id),
             // 'publish'     => formatDate($this->created_at)
         ];

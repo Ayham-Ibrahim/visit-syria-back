@@ -28,10 +28,10 @@ class StoreAboutRequest extends FormRequest
         return [
             //
             'title' => 'required|string|max:30',
-            'content' =>'nullable |string|max:1000|min:5',
+            'content' =>'nullable |string|min:5',
             'category' =>'required| in:الحضارات,الآثار,التاريخ,الطبيعة,السياحة',
             'main_image' =>'nullable|file|image|mimes:png,jpg|max:10000|mimetypes:image/jpeg,image/png,image/jpg'
-     
+
         ];
     }
 

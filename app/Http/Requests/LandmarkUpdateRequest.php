@@ -28,7 +28,7 @@ class LandmarkUpdateRequest extends FormRequest
         return [
             'name'                  => 'nullable|string|max:150|min:3',
             'location'              => 'nullable|string|max:150|min:3',
-            'primary_description'   => 'nullable|string|max:500|min:3',
+            'primary_description'   => 'nullable|string|max:1000|min:3',
             'secondary_description' => 'nullable|string|max:10000|min:3',
             'internal_image'        => 'nullable|file|image|mimes:png,jpg,jpeg,tiff|max:10000|mimetypes:image/jpeg,image/png,image/jpg,image/tiff',
             'external_image'        => 'nullable|file|image|mimes:png,jpg,jpeg,tiff|max:10000|mimetypes:image/jpeg,image/png,image/jpg,image/tiff',

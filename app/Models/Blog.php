@@ -46,7 +46,11 @@ class Blog extends Model
         return $this->belongsTo(City::class);
     }
 
-    public function getCreatedAtAttribute($value)
+    /**
+     * accessor that make the created at vlue in form of 'd-m-Y H:i:s'
+     *
+     * @return string $date in form of 'd-m-Y'
+     */    public function getCreatedAtAttribute($value)
     {
         $date = Carbon::parse($value);
         return $date->format('d-m-Y H:i:s');

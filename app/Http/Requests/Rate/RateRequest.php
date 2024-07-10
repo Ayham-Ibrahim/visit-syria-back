@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Requests\About;
+namespace App\Http\Requests\Rate;
 
 use App\Http\Traits\ApiResponseTrait;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class UpdateAboutRequest extends FormRequest
+class RateRequest extends FormRequest
 {
     use ApiResponseTrait;
     /**
@@ -27,11 +27,12 @@ class UpdateAboutRequest extends FormRequest
     {
         return [
             //
-            'title' => 'nullable |string|max:30',
-            'content' =>'nullable |string|min:5',
-            'category' =>' nullable|in:الحضارات,الآثار,التاريخ,الطبيعة,السياحة',
-            'main_image' =>'nullable|file|image|mimes:png,jpg|max:10000|mimetypes:image/jpeg,image/png,image/jpg'
-
+            'user_id'=>'integer',
+            'site_rate'=>'required|min:1|max:5|integer',
+            'clean_rate'=>'required|min:1|max:5|integer',
+            'price_rate'=>'required|min:1|max:5|integer',
+            'service_rate'=>'required|min:1|max:5|integer',
+            'total_rate'=>'nullable'
         ];
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Comment extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -67,4 +68,16 @@ class Comment extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * accessor that make the created at vlue in form of 'd-m-Y H:i:s'
+     *
+     * @return string $date in form of 'd-m-Y'
+     */
+    public function getCreatedAtAttribute($value)
+    {
+        $date = Carbon::parse($value);
+        return $date->format('d-m-Y');
+    }
+
 }
