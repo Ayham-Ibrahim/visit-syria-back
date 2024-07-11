@@ -131,7 +131,7 @@ Route::middleware('auth:api')->delete('/admin-delete-photo/{user}', [UserControl
 
 
 /**
- *  Route Groupe for authenticated users 
+ *  Route Groupe for authenticated users
  *
  * These Groupe handle the routes that allowed just for authenticated users
 */
@@ -143,9 +143,9 @@ Route::middleware('auth:api')->delete('/admin-delete-photo/{user}', [UserControl
          * @param int $hotel The ID of the hotel to add the comment to.
          * @return \Illuminate\Http\Response
          */
-        Route::post('/add-hotel-commnet/{hotel}', [CommentController::class, 'storeHotelComment']);
-        Route::post('/add-landmark-commnet/{landmark}', [CommentController::class, 'storeLandmarkComment']);
-        Route::post('/add-restaurant-commnet/{restaurant}', [CommentController::class, 'storeRestaurantComment']);
+        Route::post('/add-hotel-comment/{hotel}', [CommentController::class, 'storeHotelComment']);
+        Route::post('/add-landmark-comment/{landmark}', [CommentController::class, 'storeLandmarkComment']);
+        Route::post('/add-restaurant-comment/{restaurant}', [CommentController::class, 'storeRestaurantComment']);
 
         /**
          * Delete a comment.

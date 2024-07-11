@@ -23,7 +23,7 @@ class LandmarkController extends Controller
     public function index(Request $request)
     {
         try {
-
+            $perPage = $request->input('per_page', 9);
             $cityName = $request->input('city');
             $sortBy = $request->input('sort_by', 'id');
 
@@ -42,15 +42,14 @@ class LandmarkController extends Controller
                     $landmarks->orderBy($sortBy, 'asc');
                 }
             }
-            
-            $data = $landmarks->paginate(9);
+
+            $data = $landmarks->paginate($perPage);
             return $this->resourcePaginated(LandmarkResource::collection($data), 'Done', 200);
         } catch (\Throwable $th) {
             Log::error($th);
             return $this->errorResponse(null, "there is something wrong in server", 500);
         }
     }
-
 
     /**
      * Store a newly created resource in storage.
